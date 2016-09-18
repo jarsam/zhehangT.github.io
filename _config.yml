@@ -4,10 +4,10 @@
 
 # Site
 title: 一索哥传奇
-subtitle: 不要变成一个无趣的大人哦
+subtitle: 不能变成一个无趣的大人
 description: 一索哥传奇
 author: 一索哥传奇
-language: zh-CN
+language: zh-Hans
 timezone:
 
 # URL
@@ -64,7 +64,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: maupassant
+theme: next
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
