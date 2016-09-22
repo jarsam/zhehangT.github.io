@@ -4,7 +4,7 @@
 
 # Site
 title: 一索哥传奇
-subtitle: 不能变成一个无趣的大人
+subtitle: 一索哥传奇
 description: 一索哥传奇
 author: 一索哥传奇
 language: zh-Hans
@@ -70,6 +70,16 @@ theme: next
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type: git
-  repository: git@github.com:zhehangT/zhehangT.github.io.git
+- type: git
+  repo: git@github.com:zhehangT/zhehangT.github.io.git	
   branch: master
+- type: git
+  repo: git@git.coding.net:zhehangT/zhehangT.git
+  branch: coding-pages
+ 
+
+duoshuo_shortname: zhehangt
+
+
+
+  	
