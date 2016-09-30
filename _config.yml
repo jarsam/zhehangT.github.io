@@ -35,7 +35,7 @@ titlecase: false # Transform title into titlecase
 external_link: true # Open external links in new tab
 filename_case: 0
 render_drafts: false
-post_asset_folder: false
+post_asset_folder: true
 relative_link: false
 future: true
 highlight:
@@ -79,6 +79,30 @@ deploy:
  
 
 duoshuo_shortname: zhehangt
+
+# sync_dir: qnsource/images/
+
+
+qiniu:
+  offline: false
+  sync: true
+  bucket: images
+  secret_file: secret_file
+  access_key: 
+  secret_key: 
+  dirPrefix:
+  urlPrefix: http://oeaxm0g1o.bkt.clouddn.com
+  up_host: http://upload.qiniu.com
+  local_dir: qnsource
+  update_exist: true
+  image: 
+    folder: images
+    extend: 
+  js:
+    folder: js
+  css:
+    folder: css
+
 
 
 

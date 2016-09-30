@@ -1,3 +1,4 @@
 /.deploy_git
-/public  
+/public
+secret_file
  
