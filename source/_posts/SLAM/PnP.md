@@ -2,11 +2,12 @@
 title: 3D-2D的运动估计
 date: 2017-03-7 10:11:25
 tags:
+- SLAM基础 
 - PnP
 - 3D-2D
 categories:
 - 机器人事业
-- SLAM基础
+- SLAM
 description: 关于学习SLAM问题中如何用三维空间的点坐标和图像的像素坐标求解相机的运动估计的简单记录。
 ---
 <!-- more -->

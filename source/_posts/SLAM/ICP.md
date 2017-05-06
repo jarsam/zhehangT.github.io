@@ -2,11 +2,12 @@
 title: 3D-3D的运动估计
 date: 2017-03-17 10:11:25
 tags:
+- SLAM基础 
 - ICP
 - 3D-3D
 categories:
 - 机器人事业
-- SLAM基础
+- SLAM
 description: 关于学习SLAM问题中如何利用一组匹配好的三维点坐标估计运动估计的简单记录。
 ---
 <!-- more -->

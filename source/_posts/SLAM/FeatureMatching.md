@@ -1,10 +1,12 @@
 ---
 title: 图像特征匹配
 date: 2017-03-3 10:11:25
-tags: 特征匹配
+tags:
+- SLAM基础 
+- 特征匹配
 categories:
 - 机器人事业
-- SLAM基础
+- SLAM
 description: 关于学习视觉SLAM问题中图像特征匹配的简单记录。
 ---
 <!-- more -->

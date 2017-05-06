@@ -1,10 +1,12 @@
 ---
 title: SLAM中的非线性优化
 date: 2017-03-2 10:11:25
-tags: 非线性优化
+tags:
+- SLAM基础  
+- 非线性优化
 categories:
 - 机器人事业
-- SLAM基础
+- SLAM
 description: 关于学习SLAM问题中非线性优化的简单记录。
 ---
 <!-- more -->

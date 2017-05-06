@@ -1,10 +1,12 @@
 ---
 title: 三维空间中的刚体运动
 date: 2017-02-24 10:11:25
-tags: 刚体运动
+tags: 
+- SLAM基础 
+- 刚体运动
 categories:
 - 机器人事业
-- SLAM基础
+- SLAM
 description: 关于学习三维空间中刚体运动的简单记录。
 ---
 <!-- more -->

@@ -1,10 +1,11 @@
 ---
 title: SLAM的基本概念
 date: 2017-03-1 10:11:25
-tags: 基本概念
+tags: 
+- SLAM基础 
 categories:
 - 机器人事业
-- SLAM基础
+- SLAM
 description: 关于学习SLAM基本概念的简单记录
 ---
 <!-- more -->

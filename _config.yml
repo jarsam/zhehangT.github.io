@@ -78,7 +78,7 @@ deploy:
   branch: coding-pages
  
 
-duoshuo_shortname: zhehangt
+# duoshuo_shortname: zhehangt
 
 # sync_dir: qnsource/images/
 

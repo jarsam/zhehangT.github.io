@@ -1,10 +1,12 @@
 ---
 title: 四元数
 date: 2017-03-27 10:11:25
-tags: 刚体运动
+tags: 
+- SLAM基础 
+- 刚体运动
 categories:
 - 机器人事业
-- SLAM基础
+- SLAM
 description: 关于学习四元数的简单记录。
 ---
 <!-- more -->

@@ -2,11 +2,12 @@
 title: 单目相机中的对极几何
 date: 2017-03-5 10:11:25
 tags:
+- SLAM基础
 - 对极几何
 - 2D-2D
 categories:
 - 机器人事业
-- SLAM基础
+- SLAM
 description: 关于学习SLAM问题中如果用对极几何来评估相机位姿的简单记录。
 ---
 <!-- more -->

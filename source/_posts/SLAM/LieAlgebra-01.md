@@ -2,10 +2,11 @@
 title: 李群李代数
 date: 2017-03-15 10:11:25
 tags:
+- SLAM基础 
 - 李群李代数
 categories:
 - 机器人事业
-- SLAM基础
+- SLAM
 description: 关于学习SLAM问题中有关李群李代数的简单记录。
 ---
 <!-- more -->

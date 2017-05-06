@@ -1,10 +1,12 @@
 ---
 title: 针孔相机模型
 date: 2017-02-16 22:53:02
-tags: 相机模型
+tags:
+- 相机模型
+- SLAM基础
 categories:
 - 机器人事业
-- SLAM基础
+- SLAM
 description: 关于学习针孔相机模型过程中的一些简单记录。
 ---
 <!-- more -->

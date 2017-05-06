@@ -1,10 +1,12 @@
 ---
 title: 单目相机中的三角化测量
 date: 2017-03-6 10:11:25
-tags: 三角化测量
+tags: 
+- SLAM基础 
+- 三角化测量
 categories:
 - 机器人事业
-- SLAM基础
+- SLAM
 description: 关于学习SLAM问题中如何利用三角化测量确定特征点在三维空间中的位置。
 ---
 <!-- more -->
