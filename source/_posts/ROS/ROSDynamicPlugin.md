@@ -5,7 +5,7 @@ tags:
 categories:
 - 机器人事业
 - ROS
-description: 基于ROS，实现在系统运行中，插件的动态切换机制。
+description: 实现在系统运行过程中的插件动态切换机制。
 ---
 <!-- more -->
 
