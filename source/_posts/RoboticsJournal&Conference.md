@@ -121,8 +121,10 @@ Internaltional Conference on Computer Vision and Pattern Recogintion (CVPR)
 
 
 
-
-
+# 参考
+[机器人领域 期刊与会议](http://blog.sina.com.cn/s/blog_628dd2bc0101eanx.html)
+[机器学习领域有哪些著名的期刊和会议? - 知乎](https://www.zhihu.com/question/20224890)
+[计算机视觉顶尖期刊和会议有哪些？ - 知乎](https://www.zhihu.com/question/37687006)
 
 
 
