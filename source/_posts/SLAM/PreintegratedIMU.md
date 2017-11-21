@@ -3,7 +3,7 @@ title: On-Manifold Preintegration for Real-Time Visual-Inertial Odometry 论文�
 date: 2017-11-7 10:11:25
 tags:
 - SLAM基础
-- IMU预积分
+- VIO
 categories:
 - 机器人事业
 - SLAM
