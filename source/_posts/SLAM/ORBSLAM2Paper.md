@@ -23,7 +23,7 @@ ORB-SLAM2为SLAM的发展作出了以下几个**贡献**：
 4.通过禁用建图来实现利用已有地图，进行轻量级的定位。
 
 # ORB-SLAM2
-ORB-SLAM2的框架和ORB-SLAM的框架几乎是一模一样的，包含了三个线程：Tracking，Local Mapping和Loop Closing。主要的区别还是在...。因此与ORB-SLAM相同的部分就不再赘述，详细可参考上一篇关于ORB-SLAM论文的博客。
+ORB-SLAM2的框架和ORB-SLAM的框架几乎是一模一样的，包含了三个线程：Tracking，Local Mapping和Loop Closing。主要的区别还是在对于双目相机和RBG-D相机前端，是如何进行追踪并构建后端优化问题的。因此与ORB-SLAM相同的部分就不再赘述，详细可参考上一篇关于ORB-SLAM论文的博客。
 
 **A.Monocular, Close Stereo and Far Stereo Keypoints**
 ORB-SLAM2是基于特征的SLAM系统，因此当从输入的图像中提取特征之后，图像不需要被保存而是直接丢弃，因此可以说ORB-SLAM2与传感器之间是相互独立的，重要的还是特征提取的过程，如图所示。
