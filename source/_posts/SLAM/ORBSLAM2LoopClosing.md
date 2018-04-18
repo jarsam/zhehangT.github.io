@@ -2,7 +2,7 @@
 title: ORB_SLAM2中的回环检测
 date: 2018-04-11 10:11:25
 tags:
-- ORBSLAM
+- ORB-SLAM
 - 源码学习
 categories:
 - 机器人事业

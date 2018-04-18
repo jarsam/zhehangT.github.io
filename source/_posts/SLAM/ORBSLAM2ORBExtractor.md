@@ -1,8 +1,8 @@
 ---
-title: ORB_SLAM中的ORB特征提取与匹配
+title: ORB_SLAM2中的ORB特征提取与匹配
 date: 2018-01-11 10:11:25
 tags:
-- ORBSLAM
+- ORB-SLAM
 - 源码学习
 categories:
 - 机器人事业

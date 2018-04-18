@@ -2,7 +2,7 @@
 title: Real-Time Loop Closure in 2D LIDAR SLAM 论文笔记
 date: 2017-05-1 10:11:25
 tags:
-- ORB-SLAM
+- Cartographer
 categories:
 - 机器人事业
 - SLAM

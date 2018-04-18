@@ -2,7 +2,7 @@
 title: A Robust and Versatile Monocular Visual-Inertial State Estimator 论文笔记
 date: 2017-11-11 10:11:25
 tags:
-- SLAM基础
+- VINS-Mono
 - VIO
 categories:
 - 机器人事业
