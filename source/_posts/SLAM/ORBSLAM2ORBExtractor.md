@@ -7,7 +7,7 @@ tags:
 categories:
 - 机器人事业
 - SLAM
-description: ORB_SLAM中的ORB特征提取与匹配的相关代码学习
+description: ORB_SLAM2中的ORB特征提取与匹配的相关代码学习
 ---
 <!-- more -->
 

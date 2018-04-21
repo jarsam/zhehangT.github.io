@@ -67,6 +67,10 @@ pagination_dir: page
 ## Themes: https://hexo.io/themes/
 theme: next
 
+search:
+  path: search.xml
+  field: post
+
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
@@ -76,11 +80,7 @@ deploy:
 - type: git
   repo: git@git.coding.net:zhehangT/zhehangT.git
   branch: coding-pages
- 
 
-# duoshuo_shortname: zhehangt
-
-# sync_dir: qnsource/images/
 
 
 qiniu:
