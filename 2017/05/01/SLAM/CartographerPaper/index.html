@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Cartographer," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="关于Google开源的Cartographer SLAM论文的论文笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Real-Time Loop Closure in 2D LIDAR SLAM 论文笔记">
+<meta property="og:url" content="https://zhehangt.github.io/2017/05/01/SLAM/CartographerPaper/index.html">
+<meta property="og:site_name" content="一索哥传奇">
+<meta property="og:description" content="关于Google开源的Cartographer SLAM论文的论文笔记">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/CartographerPaper-01.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/CartographerPaper-02.png">
+<meta property="og:updated_time" content="2018-04-18T07:08:14.171Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Real-Time Loop Closure in 2D LIDAR SLAM 论文笔记">
+<meta name="twitter:description" content="关于Google开源的Cartographer SLAM论文的论文笔记">
+<meta name="twitter:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/CartographerPaper-01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zhehangt.github.io/2017/05/01/SLAM/CartographerPaper/"/>
+
+
+
+
+
+  <title>Real-Time Loop Closure in 2D LIDAR SLAM 论文笔记 | 一索哥传奇</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一索哥传奇</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一索哥传奇</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zhehangt.github.io/2017/05/01/SLAM/CartographerPaper/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="一索哥">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一索哥传奇">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Real-Time Loop Closure in 2D LIDAR SLAM 论文笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-01T10:11:25+08:00">
+                2017-05-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器人事业/" itemprop="url" rel="index">
+                    <span itemprop="name">机器人事业</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器人事业/SLAM/" itemprop="url" rel="index">
+                    <span itemprop="name">SLAM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/05/01/SLAM/CartographerPaper/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2017/05/01/SLAM/CartographerPaper/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/05/01/SLAM/CartographerPaper/" class="leancloud_visitors" data-flag-title="Real-Time Loop Closure in 2D LIDAR SLAM 论文笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  关于Google开源的Cartographer SLAM论文的论文笔记
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <a id="more"></a>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这是关于Google开源的Cartographer SLAM系统的论文。一直在学习视觉SLAM的相关知识，突然上手读这篇基于激光的SLAM论文，有些措手不及。希望能通过论文笔记的方式去数理整篇论文的思路。</p>
+<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>论文的贡献在于：提出了一种新颖的基于激光数据的回环检测方式，这种方式可以减少计算量，满足实时的大场景地图构建以及大规模的实时优化的性能需求。<br>激光数据往往被认为信息量少，难以用于回环检测，因此这个工作还是非常nice的。</p>
+<h1 id="Related-Work"><a href="#Related-Work" class="headerlink" title="Related Work"></a>Related Work</h1><p>对于scan matching方面了解较少，所以将这方面的论文都列出来，方面以后的进一步学习。<br>相关工作中首先介绍了scan matching的几种方法：<br>1.scan-to-scan matching 是基于激光的SLAM中最常用来估计相关位姿的方法。但是非常容易造成累积误差。[1,2,3,4]<br>2.scan-to-map matching 可以减少累积误差，因为scan-to-map每次都通过高斯-牛顿法获得局部最优的位姿，前提是要有一个比较好的初始化位姿估计。[5]<br>3.pixel-accurate scan matching 可以进一步减少局部误差，但是计算量比较大。这个方法同样可以用来检测回环。<br>4.从laser scan中提取特征，从而减少计算量[4]。histogram-based matching用于回环检测[6]。用机器学习做laser scan的特征检测[7]。</p>
+<p>之后介绍了处理累积误差的两种方式。<br>1.基于粒子滤波的优化。粒子滤波在处理大场景地图时，由于粒子数的极具增长造成资源密集。粒子滤波这一块我了解不多，论文中给出了给了几个相关论文。[8,9,10]<br>2.基于位姿图的优化。与视觉SLAM的位姿图优化大同小异，主要是在观测方程上的区别。论文中给的相关论文[2,11,12,13]。</p>
+<blockquote>
+<p>感觉作者写相关工作写的好敷衍。其实我觉得，整篇论文都好敷衍，公式多解释少。</p>
+</blockquote>
+<h1 id="System-Overview"><a href="#System-Overview" class="headerlink" title="System Overview"></a>System Overview</h1><p>Cartographer 能产生一个精确度为5cm的2D栅格地图。精确度为5cm是因为组成submap是一系列5cm×5cm的栅格。每次laser scan会通过当前的submap进行scan matching，从而将laser scan插入到submap中的最优估计位置。然后再用laser scan去更新submap。submap是通过与当前laser scan通过邻近的多个laser scan更新产生了，因此scan matching本质上也是在当前laser scan和多个邻近laser scan之间进行的。<br>通过scan matching得到的位姿估计在短时间内是可靠的，但是长时间会有累积误差，为了优化这个误差会有规律的执行pose optimization。当不再有新的scan插入到一个submap，就认为这个submap已经创建完成了。所有创建完成的submap以及scans都会用作回环检测的scan matching。如果有scans和submap在距离上足够的近，则scan matcher会尝试寻找回环can matching。为了减少计算量，Cartographer设置了特殊的策略来找到回环scan matching。这个策略就是根据当前的位姿估计附近设置搜索窗口，在这个搜索窗口内执行branch-and-bound方法来寻找回环scan matching，如果找到了一个足够好的match，则会将该匹配的闭环约束加入到位姿优化问题中。</p>
+<p>论文中说回环优化的速度非常快，快到可以在加入新的submap之前就完成优化，从而保证了一种软实时。优化这么快是因为用了 branch-and-bound approach 以及submap中栅格的预计算。</p>
+<h1 id="Local-2D-SLAM"><a href="#Local-2D-SLAM" class="headerlink" title="Local 2D SLAM"></a>Local 2D SLAM</h1><p>Cartographer通过 local 和 global 两种方式进行SLAM。<br>local方式就是通过submap进行scan matching在这一章。<br>global方式就是回环检测在下一章。</p>
+<p><strong>A.Scans</strong><br>一个scans包含一个起点和很多个终点的。起点称为origin，终点称为scan points，用$H= \{ h_k \}_ {k=1,…,k}$。在scan坐标系下，origin就是坐标原点，scan points就是在scan坐标系下的坐标。当把一个scans插入到一个submap中时，假设submap坐标系到scan坐标系的坐标转换为$T_{\xi}$，即激光传感器在submap坐标系下的位姿。则每个$h$在submap坐标系下的坐标为：$T_{\xi}h$</p>
+<p><strong>B.Submaps</strong><br>一个submap是通过几个连续scans创建，是由5cm×5cm大小的概率栅格$[p_{min},p_{max}]$(submap创建完成时的栅格概率如果小于$p_{min}$表示未被占用，在$p_{min}$和$p_{max}$之间表示未知，大于$p_{max}$表示占用)。每个submap的中心称为grid point，submap中的其他点称为corresponding pixel。<br>对于每个scan，都会产生一组称为hits的grid point和一组称为misses的grid point。如下图所示。<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/CartographerPaper-01.png"><br>其中阴影带叉的是hits，阴影不带叉的是misses。<br>每个hits中的grid point被赋予初始值$p_{hit}$，每个misses中的grid point被赋予初始值$p_{miss}$<br>如果grid point已经有$p$值,则用下述公式更新hit。</p>
+<p>$odds(p)=\dfrac{p}{1-p}$<br>$M_{new}(x)= clamp(odds^{-1}(odds(M_{old}(x)) \cdot odds(p_{hit}) ))$</p>
+<p>miss也是类似的。</p>
+<p><strong>C.Ceres scan matching</strong><br>把scan插入到submap之前，需要通过scan matching对$T_{\varepsilon}$进行优化。这里的优化问题为非线性最小二乘问题，通过Ceres库进行求解，非线性最小二乘问题构造形式如下式：<br>$$<br>\underset {\xi}{argmin} \sum_{k=1}^K(1-M_{smooth}(T_{\xi}h_k))^2 \qquad  (\mathrm{cs})<br>$$<br>其中$M_{smooth}$函数完成了从2D到1D的平滑函数。这里用的是 bicubic interpolation 方法。<br>对于优化问题，一个相对精确的初始估计非常重要。因此如果通过IMU提供角度信息，可以提高优化的准确性。在缺少IMU的情况下，高频率的matching或者pixel-accurate scan matching也可以提高准确性，但会增加时间复杂度。</p>
+<blockquote>
+<p>有几个问题感觉论文中没说清楚，一个submap的大小和形状是怎么样的，当scan的origin不在当前的submap内，但是points在submap中时是怎么更新和匹配submap的，这些疑问还需要结合源代码做进一步的分析。</p>
+</blockquote>
+<h1 id="Closing-Loops"><a href="#Closing-Loops" class="headerlink" title="Closing Loops"></a>Closing Loops</h1><p>Cartograoher通过创建大量的小submap来实现大场景的建图。为了消除小submap带来的累积误差，通过优化所有scan和submap的位姿，来提高准确度。优化方法参考了论文[2]。</p>
+<p>A. Optimization problem<br>回环的优化问题与scan matching的优化问题类似，都是通过构造非线性最小二乘的方式进行的。形式如下：<br>$$\underset {\Xi^m,\Xi^s }{argmin} \dfrac{1}{2} \sum_{ij} \rho( E^2({\xi}_i^m, {\xi}_j^s; \Sigma_{ij}, {\xi}_{ij} ) ) \qquad  (\mathrm{spa})<br>$$<br>其中$\Xi^m = \{ {\xi}_i^m  \}_{i=1,..,m}$是submap的位姿，$\Xi^s= \{ {\xi}_j^s  \}_{j=1,..,s}$是scan的位姿，这些位姿是在世界坐标系下的。submap位姿和scan位姿之间存在约束条件。${\xi}_ij$表示scan在submap坐标系下的位姿，$\Sigma_{ij}$是相应的协方差矩阵，这个协方差矩阵可以通过[14]的方式获得，也可以通过$(\mathrm{cs})$公式获得。<br>残差E的计算公式如下：<br>$$<br>E^2(\xi_i^m, \xi_j^s;\Sigma_{ij},\xi_{ij})=e(\xi_i^m, \xi_j^s;\xi_{ij})\Sigma_{ij}^{-1} e(\xi_i^m, \xi_j^s;\xi_{ij})  \\<br>e(\xi_i^m, \xi_j^s;\xi_{ij}) = \xi_{ij} - \begin{pmatrix}<br>R^{-1}_{\xi_{i}^m}(t_{\xi_{i}^m} - t_{\xi_{j}^s})  \\<br>\xi_{i;\theta}^m - \xi_{j;\theta}^s<br>\end{pmatrix}<br>$$</p>
+<blockquote>
+<p>论文读到这里，实在是不明白这个公式怎么就约束回环了。经过一些自己的思考，大概理了下思路：在Local 2D SLAM中所有的约束都是scans在某一个submap中得到，也就是公式CS。但是仅靠scans在某一个submap中的约束是无法进行回环的。要进行回环优化必须添加回环约束。我认为这里的回环约束就是要找到scans在多个submap中的约束。实际上当前的scans可能可以观察到多个submap，也就是说当前的scans是可以被多个submap定位的，但是为了简化，在Local 2D SLAM中，只通过当前的submap来对scans进行定位。而loop scan matching就是尝试在其他的submap对scans进行定位，如果能够在其他submap中定位成功，那么就是一个回环约束。至于到底是不是这样的，还需要分析源码来进行验证，论文是看晕了。</p>
+</blockquote>
+<p>如果上述的解释是正确的。那么对残差公式就有了这样的解释。submap的位姿$\xi_i^m$和scan的全局位姿$\xi_j^s$是在Local 2D SLAM中得到的，其中$\xi_j^s$是由Local 2D SLAM中对该scan进行定位的submap的位姿计算相应的坐标计算得到的。$\xi_{ij}$是在回环scan matching中得到的。整个优化过程就是调整scan matching到的submap的位姿和对该scan进行Local定位的submap的位姿，从而最终得到全局一致性的地图。</p>
+<p>B.Branch-and-bound scan matching<br>之前提到的回环约束关系$\xi_{ij}$就是通过这里的方法得到的，也是整篇论文最核心的地方。<br>首先看一下pixel-accurate match的匹配过程。<br>$$<br>\xi^* = \underset{\xi \in W}{argmax} \sum_{k=1}^K M_{nearest}(T_{\xi}h_k) \qquad  (\mathrm{BBS})<br>$$<br>其中$W$是搜索空间，$M_{nearest}$就是该pixel对应的grid point的M值。之后可以通过CS公式进一步提高$\xi$匹配的准确度。</p>
+<p>搜索空间和搜索步长的选择是决定pixel-accurate match是否高效的关键。<br>论文给出了搜索步长的计算方式。<br>$$<br>d_{max} = \underset{k=1,…K}{max} \left \| h_x \right \|  \\<br>\delta_{\theta} = arccos (1-\dfrac{r^2}{2d_{max}^2}) \\<br>w_x = \left \lceil \dfrac{W_x}{r} \right \rceil \quad w_y = \left \lceil \dfrac{W_y}{r} \right \rceil \quad w_{\theta} = \left \lceil \dfrac{W_{\theta}}{\delta_{\theta}} \right \rceil<br>$$<br>其中$W_x = W_y=7m$，$W_{\theta}$，因此搜索空间就可以确定了。此时搜索空间的大小是7m*7m。<br>$$<br>\overline{W} = \{ -w_x,…,w_x \} \times \{ -w_y,…,w_y \} \times \{-w_{\theta},…,w_{\theta} \} \\<br>W = \{ \xi_0 + (rj_x, rj_y, \delta_{\theta}j_{\theta}):(j_x,j_y,j_{\theta}) \in \overline{W}  \}<br>$$<br>有了搜索空间和搜索步长，就可以得到最原始的暴力搜索方式。如下图所示:<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/CartographerPaper-02.png"></p>
+<p>为了进一步提高搜索效率，Cartograoher采用了branch and bound approach的方式。branch and bound approach是一种在问题的解空间树上搜索问题的解的方法，被Google套用在最优位姿的搜索中,从而将无法实时化暴力解优化到可以满足实时化，不得不说真是厉害。所以学好算法是多么重要。<br>至于branch and bound approach到底是怎么做的，还是看论文吧。</p>
+<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><p>[1] E. Olson, “M3RSM: Many-to-many multi-resolution scan matching,” in Proceedings of the IEEE International Conference on Robotics and Automation (ICRA), June 2015.<br>[2] K. Konolige, G. Grisetti, R. Kümmerle, W. Burgard, B. Limketkai, and R. Vincent, “Sparse pose adjustment for 2D mapping,” in IROS, Taipei, Taiwan, 10/2010 2010.<br>[3] F. Lu and E. Milios, “Globally consistent range scan alignment for environment mapping,” Autonomous robots, vol. 4, no. 4, pp. 333–349, 1997.<br>[4] F. Martı́n, R. Triebel, L. Moreno, and R. Siegwart, “Two different tools for three-dimensional mapping: DE-based scan matching and feature-based loop detection,” Robotica, vol. 32, no. 01, pp. 19–41,2014.<br>[5] S. Kohlbrecher, J. Meyer, O. von Stryk, and U. Klingauf, “A flexible and scalable SLAM system with full 3D motion estimation,” in Proc. IEEE International Symposium on Safety, Security and Rescue Robotics (SSRR). IEEE, November 2011.<br>[6] M. Himstedt, J. Frost, S. Hellbach, H.-J. Böhme, and E. Maehle, “Large scale place recognition in 2D LIDAR scans using geometrical landmark relations,” in Intelligent Robots and Systems (IROS 2014),2014 IEEE/RSJ International Conference on. IEEE, 2014, pp. 5030–5035.<br>[7] K. Granström, T. B. Schön, J. I. Nieto, and F. T. Ramos, “Learning to close loops from range data,” The International Journal of Robotics Research, vol. 30, no. 14, pp. 1728–1754, 2011.<br>[8] G. Grisetti, C. Stachniss, and W. Burgard, “Improving grid-based SLAM with Rao-Blackwellized particle filters by adaptive proposals and selective resampling,” in Robotics and Automation, 2005. ICRA 2005. Proceedings of the 2005 IEEE International Conference on. IEEE, 2005, pp. 2432–2437.<br>[9] G. D. Tipaldi, M. Braun, and K. O. Arras, “FLIRT: Interest regions for 2D range data with applications to robot navigation,” in Experimental Robotics. Springer, 2014, pp. 695–710.<br>[10] J. Strom and E. Olson, “Occupancy grid rasterization in large environments for teams of robots,” in Intelligent Robots and Systems (IROS),2011 IEEE/RSJ International Conference on. IEEE, 2011, pp. 4271–<br>4276.<br>[11] R. Kümmerle, G. Grisetti, H. Strasdat, K. Konolige, and W. Burgard,“g2o: A general framework for graph optimization,” in Robotics and Automation (ICRA), 2011 IEEE International Conference on. IEEE,2011, pp. 3607–3613.<br>[12] L. Carlone, R. Aragues, J. A. Castellanos, and B. Bona, “A fast and accurate approximation for planar pose graph optimization,” The International Journal of Robotics Research, pp. 965–987, 2014.<br>[13] M. Bosse and R. Zlot, “Map matching and data association for large-scale two-dimensional laser scan-based SLAM,” The International Journal of Robotics Research, vol. 27, no. 6, pp. 667–691, 2008.<br>[14] E. B. Olson, “Real-time correlative scan matching,” in Robotics and Automation, 2009. ICRA’09. IEEE International Conference on. IEEE, 2009, pp. 4387–4393.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Cartographer/" rel="tag"># Cartographer</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/27/SLAM/ORBSLAM/ORBSLAM2Rviz/" rel="next" title="ORB-SLAM2的Rviz可视化方案">
+                <i class="fa fa-chevron-left"></i> ORB-SLAM2的Rviz可视化方案
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/18/RoboticsJournal&Conference/" rel="prev" title="机器人领域期刊会议">
+                机器人领域期刊会议 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="一索哥" />
+            
+              <p class="site-author-name" itemprop="name">一索哥</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zhehangT" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/zhehangt" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-bell"></i>知乎</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Related-Work"><span class="nav-text">Related Work</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#System-Overview"><span class="nav-text">System Overview</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Local-2D-SLAM"><span class="nav-text">Local 2D SLAM</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Closing-Loops"><span class="nav-text">Closing Loops</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文献"><span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">一索哥</span>
+
+  
+
+  <span class="post-meta-divider">|</span>
+
+  <!--以下3行为一条竖线和Coding Page-->
+  <div class="powered-by">  
+  </div>
+  <span>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'zhehangT',
+            repo: 'zhehangT.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '3312597c20604234f06743ae78536c8b5ba1f353',
+            
+                client_id: '6f269f6d35b1b1291231'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('-1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("vnQ4VyLcQhpvNz1HMRY2rEMS-gzGzoHsz", "pgWRIt4VTSSNz6dQ94VbkU3J");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

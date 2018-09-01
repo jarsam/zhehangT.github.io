@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="VIO,VINS-Mono," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="关于开源SLAM系统VINS-Mono的论文笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A Robust and Versatile Monocular Visual-Inertial State Estimator 论文笔记">
+<meta property="og:url" content="https://zhehangt.github.io/2017/11/11/SLAM/VINS/VINSPaper/index.html">
+<meta property="og:site_name" content="一索哥传奇">
+<meta property="og:description" content="关于开源SLAM系统VINS-Mono的论文笔记">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-01.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-02.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-03.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-04.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-05.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-06.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-07.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-08.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-09.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-10.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-11.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-12.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-16.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-17.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-13.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-14.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-15.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-18.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-19.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-20.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-21.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-22.png">
+<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-23.png">
+<meta property="og:updated_time" content="2018-09-01T03:49:02.352Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="A Robust and Versatile Monocular Visual-Inertial State Estimator 论文笔记">
+<meta name="twitter:description" content="关于开源SLAM系统VINS-Mono的论文笔记">
+<meta name="twitter:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zhehangt.github.io/2017/11/11/SLAM/VINS/VINSPaper/"/>
+
+
+
+
+
+  <title>A Robust and Versatile Monocular Visual-Inertial State Estimator 论文笔记 | 一索哥传奇</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一索哥传奇</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一索哥传奇</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zhehangt.github.io/2017/11/11/SLAM/VINS/VINSPaper/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="一索哥">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一索哥传奇">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">A Robust and Versatile Monocular Visual-Inertial State Estimator 论文笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-11T10:11:25+08:00">
+                2017-11-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器人事业/" itemprop="url" rel="index">
+                    <span itemprop="name">机器人事业</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器人事业/SLAM/" itemprop="url" rel="index">
+                    <span itemprop="name">SLAM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/11/11/SLAM/VINS/VINSPaper/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2017/11/11/SLAM/VINS/VINSPaper/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/11/11/SLAM/VINS/VINSPaper/" class="leancloud_visitors" data-flag-title="A Robust and Versatile Monocular Visual-Inertial State Estimator 论文笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  关于开源SLAM系统VINS-Mono的论文笔记
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <a id="more"></a>
+<h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>VINS-Mono是最新的基于单目与IMU融合的SLAM系统，整篇文章详细描述了VINS系统的各个部分，与ORB-SLAM-Inertial进行对比学习，进一步加深IMU预积分如何应用到一个单目SLAM系统中去。</p>
+<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-01.png">
+<p>VINS主要分为4个部分：<br>（1）观测数据的预处理<br>负责图像特征提取，IMU测量值的预积分<br>（2）初始化<br>提供所有初始信息，包括位姿、速度、重力向量、陀螺仪偏差和三维地图点<br>（3）VIO<br>将IMU预积分信息与视觉特征融合，形成紧耦合的VIO，并且带有重定位和回环检测功能<br>（4）位姿优化<br>验证重定位结果，执行全局优化来消除累积误差</p>
+<h1 id="观测数据预处理"><a href="#观测数据预处理" class="headerlink" title="观测数据预处理"></a>观测数据预处理</h1><p>1）图像数据预处理<br>VINS中，单目图像的追踪是通过 KLT sparse optical flow 算法进行的，提取的图像特征为角点特征，检测器（detector）通过设定像两个角点特征之间的最小像素间隔，来保证所提取的角点特征在图像中的分布。<br>在这一阶段还会执行关键帧的选择，需要满足两个条件。第一，当前帧和上一个关键帧之间要有足够的视差。第二，如果当前帧所追踪的特帧数目低于某个值，当前帧会被作为关键帧，以避免特征点追踪丢失的情况。</p>
+<p>2）IMU预积分<br>这篇论文的IMU预积分在速度和平移上的与之前的两篇类似，但是在旋转上采用了四元数的方式。四元数的形式感觉上不如李代数来的简洁直观，采用四元数的方式的原因大概是跟作者之前的工作保持一致。</p>
+<p>这篇论文还简单地给出了如何推导出预积分模型，主要思路就是将参考系从世界坐标系转换到预积分开始时刻的IMU坐标系下，从而可以将IMU的观测值分离出来。<br>公式（3）是世界坐标系下的计算公式。<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-02.png"><br>公式（5）是以积分开始时刻IMU坐标系下的计算公式。$\alpha,\beta,\gamma$为只与imu测量值相关的部分，如公式（6）<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-03.png"><br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-04.png"><br>公式（7）为公式（6）的差分形式，要计算两个关键帧之间的预积分，即对每个观测值进行累加。<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-05.png"></p>
+<p>公式（9）给出了欧拉积分公式下系统状态的误差方程。得到协方差矩阵$P_{b_{k+1}}^{b_k}$。<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-06.png"></p>
+<p>公式（10）给出了协方差矩阵的迭代求解方式。<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-07.png"></p>
+<p>同样对于系统状态的雅可比矩阵也可以用迭代的方式求解（11）。<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-08.png"></p>
+<p>当得到新的IMU偏差量之后，为了减少计算量，可以通过公式（12）的方式更新IMU预积分量。<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-09.png"></p>
+<p>至此，得到了IMU的观测模型（13），即可建立基于IMU预积分的残差项。<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-10.png"></p>
+<blockquote>
+<p>总得来说，IMU预积分模型都大同小异，对于雅可比矩阵和协方差矩阵的计算，还需要进一步的分析，但是感觉应该和前两篇论文是一样的。</p>
+</blockquote>
+<h1 id="估计初始化"><a href="#估计初始化" class="headerlink" title="估计初始化"></a>估计初始化</h1><p>与ORB-SLAM-Inertial不同的是，在本篇文章的初始化中，作者选择忽视加速度偏差，其理由是加速度偏差与重力在量级上相差比较大，加速度偏差很难被观测。</p>
+<p>1）视觉初始化<br>与ORB-SLAM-Inertial类似，初始化过程将从纯视觉SLAM开始。当帧之间有足够的视差，就利用5点法恢复出旋转和平移，并对特征点进行三角化。根据当前的最后一帧和三角化的地图点，利用PnP方法对其他帧进行位姿估计。最后利用full-BA进行优化。另外，将第一帧图像作为世界坐标系的原点。</p>
+<p>2）陀螺仪偏差初始化<br>陀螺仪的偏差估计原理上与ORB-SLAM-Inertial是相同的，只不过这里使用了四元数。如式（15）所示。<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-11.png"></p>
+<p>基于新得到的陀螺仪偏差，利用式（12）对IMU预积分项进行更新。</p>
+<p>3）速度，重力向量和尺度初始化<br>把速度，重力向量和尺度作为估计量：<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-12.png"></p>
+<p>这部分的求解与ORB-SLAM-Inertial初始化的第二步是类似的，即将待估计的变量构造成一个超定方程，然后求其最小二乘解。但是在ORB-SLAM-Inertial作者曾指出，如果直接引入速度变量，会增加超定方程是病态的可能性。这篇文章中，并没有这样的考虑。</p>
+<p>4）重力修正<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-16.png"><br>其基本原理就是利用上图所示的切线空间中的正交基$b_1$和$b_2$，计算其修正量$w1$和$w2$，修正后的重力向量为$g\cdot \bar{\hat{g}} + w_1b_1 + w_2b_2$。将其代入式（17），将$w_1$和$w_2$与（16）中的变量一起求解。正交基$b_1$和$b_2$可以通过如下的方式得到。<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-17.png"><br>通过不断的迭代上述过程，直到$\hat{g}$收敛。</p>
+<p>通过修正重力向量的方向，可以得到世界坐标系$(\cdot)^w$与参考坐标系$(\cdot)^{c_0}$之间的旋转$q_{c_0}^w$。利用$q_{c_0}^w$即可将之前得到的所有的速度修正到世界坐标系下。</p>
+<blockquote>
+<p>对比ORB-SLAM-Inertial中的重力修正部分，此处的重力修正部分虽然不如ORB-SLAM-Inertial中来得简洁明了，但是其利用了重力向量只有两个自由度需要估计（pitch，roll）的优点，在计算速度和准确性上可能会存在优势。</p>
+</blockquote>
+<h1 id="紧耦合VIO"><a href="#紧耦合VIO" class="headerlink" title="紧耦合VIO"></a>紧耦合VIO</h1><p>对于VIO，本文采用了基于滑动窗口的紧耦合的形式，在滑动窗口内所有要估计的系统状态如下：<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-13.png"><br>其中$x_k$表示IMU在第$k$张图片时的状态，$\lambda_l$表示第$l$个特征点的反向深度。<br>我们采取 visual-inertial bundle adjustment 的形式，来对系统状态进行优化：<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-14.png"><br>分别包含了先验残差项，IMU残差项和视觉残差项。</p>
+<p>1）IMU残差项<br>基于式（13）的可以建立式（24）的IMU残差项，<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-15.png"><br>很奇怪的是，式（24）中的IMU预积分并没有包含偏差IMU偏差。</p>
+<p>2）视觉残差项<br>与之前两篇论文中不同的是，VINS中所用的视觉残差项是基于球面的，而不是针孔的。这样做的好处是视觉模型可以兼容几乎所有类型的相机，包括广角相机和鱼眼相机。式（25）概括了整个视觉残差项的构造过程。<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-18.png"><br>需要注意的是，这里的反投影是利用图像中的像素点坐标$[u,v]$得到三维空间中的特征点坐标。首先利用第$i$帧图像，该计算特征点坐标在当前相机坐标系下的三维坐标。然后利用第$j$帧图像对相同特帧点的观测，以及第$i$帧图像和第$j$帧图像之间的外参，同样计算出该特征点在第$i$帧图像相机坐标系下的三维坐标，在将两者的误差投影到正切空间，即可得到一个二维的残差值。其中$b_1$和$b_2$的计算与重力修正时用到的算法相同。</p>
+<p>3）边缘化<br>为了保证滑动窗口内的关键帧数目保持在一个可以快速求解的数目，VINS中使用了 marginalization 方法，关键帧的选择方法如图所示：<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-19.png"></p>
+<p>边缘化方法使用了 Schur complement 方法，并将边缘化的观测数据与要被去除的状态，转化为先验信息，加入到整个优化问题中。</p>
+<p>4）Motion-only Bundle Adjustment<br>为了进一步减小计算量，引入另一种BA的形式。<br>此处依旧沿用式（22），但不再优化像（21）中所示的所有变量，只优化位姿、速度和固定数目的IMU状态，而把特征点深度、外参、偏差和旧的IMU状态作为固定量。使用依靠所有视觉和IMU观测量的motion-only BA，而不是依靠单张图像帧的PnP方法，可以使得状态估计的结果更加平滑。<br>这里有点像ORB-SLAM中的Tracking线程干的事。</p>
+<p>文中还提到了IMU-Rate的状态估计、失败检测及恢复。</p>
+<h1 id="重定位"><a href="#重定位" class="headerlink" title="重定位"></a>重定位</h1><p>重定位首先从回环检测开始。与ORB-SLAM类似，回环检测使用了词袋模型DBoW2，依赖于corner角点和BRIEF描述子。文中提到由于VIO可以观测roll和pitch，因此不需要依赖像ORB这种具备旋转不变性的特征。</p>
+<p>检测到回环之后，要建立当前帧和回环帧之间的特征关联，通过BRIEF得到的特征关联会有很多的异常匹配，因此文中采用了基于对极几何和PnP的RANSAC来剔除异常匹配。</p>
+<p>建立匹配之后，将利用匹配关系建立约束，如式（26）所示：<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-20.png"><br>与式（22）相比，式（26）多了一个回环误差项。</p>
+<h1 id="全局位姿优化"><a href="#全局位姿优化" class="headerlink" title="全局位姿优化"></a>全局位姿优化</h1><p>重定位只是将当前滑动窗口与之前的位姿信息进行了对齐，为了获得全局一致的位姿信息，还需要进行全局位姿优化。之前也提到过，对于VIO来说，roll和pitch是客观测的，因此全局位姿的优化是一个四自由度的优化问题。</p>
+<p>当关键帧被边缘化时，它会被加入到全局位姿图中。全局位姿图中的关联关系有两种，第一种称为 Sequential Edges, 是当前关键帧$i$在滑动窗口中与之前关键帧$j$之间的相对位置关系。如式（27）。<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-21.png"></p>
+<p>如果被边缘化的关键帧被检测到是回环，则会存在第二种关联关系，称为Loop Closure Edge，即关键帧与回环帧之间相对位置关系。其约束关系与式（27）相同。</p>
+<p>有了关联关系之后，即可定义进行位姿图优化的残差项，如式（28）。<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-22.png"><br>$\hat{\theta_i},\hat{\phi_i}$ 是可以从VIO中直接得到的 roll 和 pitch 的角度。</p>
+<p>全局位姿优化问题即可构造为：<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/VINS/VINS-23.png"><br>其中第一项是Sequential Edges，第二项为Loop Closure Edge。</p>
+<p>为了保证VINS可以长时间的运行，防止位姿图过于庞大，在运行过程中采用了一种降采样的方式，来限制位姿图的尺寸。包含 Loop Closure Edge 的关键帧将会被保留，而某些与相邻关键帧很接近或者关联关系很类似的关键帧，就会被去除。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>实验部分暂时先跳过了。<br>初次学习VIO，通读整篇文章还是有些吃力，很多地方理解的还有些羞涩。希望能够结合VINS的代码，进一步加深理解。<br>下一步，好好撸代码吧！</p>
+<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><p>VINS-Mono: A Robust and Versatile Monocular Visual-Inertial State Estimator<br><a href="http://www.cnblogs.com/buxiaoyi/p/7353353.html" target="_blank" rel="external">http://www.cnblogs.com/buxiaoyi/p/7353353.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/VIO/" rel="tag"># VIO</a>
+          
+            <a href="/tags/VINS-Mono/" rel="tag"># VINS-Mono</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/09/SLAM/ORBSLAM/ORBIMU/" rel="next" title="Visual-Inertial Monocular SLAM with Map Reuse 论文笔记">
+                <i class="fa fa-chevron-left"></i> Visual-Inertial Monocular SLAM with Map Reuse 论文笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/20/C++/Primer-07/" rel="prev" title="《C++ Primer》 读书笔记 7">
+                《C++ Primer》 读书笔记 7 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="一索哥" />
+            
+              <p class="site-author-name" itemprop="name">一索哥</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zhehangT" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/zhehangt" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-bell"></i>知乎</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#摘要"><span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#观测数据预处理"><span class="nav-text">观测数据预处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#估计初始化"><span class="nav-text">估计初始化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#紧耦合VIO"><span class="nav-text">紧耦合VIO</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#重定位"><span class="nav-text">重定位</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#全局位姿优化"><span class="nav-text">全局位姿优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文献"><span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">一索哥</span>
+
+  
+
+  <span class="post-meta-divider">|</span>
+
+  <!--以下3行为一条竖线和Coding Page-->
+  <div class="powered-by">  
+  </div>
+  <span>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'zhehangT',
+            repo: 'zhehangT.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '3312597c20604234f06743ae78536c8b5ba1f353',
+            
+                client_id: '6f269f6d35b1b1291231'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('-1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("vnQ4VyLcQhpvNz1HMRY2rEMS-gzGzoHsz", "pgWRIt4VTSSNz6dQ94VbkU3J");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
