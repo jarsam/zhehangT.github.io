@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="一索哥传奇">
 <meta property="og:description" content="关于学习SLAM问题中如何利用三角化测量确定特征点在三维空间中的位置。">
 <meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/Triangularization-01.png">
-<meta property="og:updated_time" content="2017-05-06T12:50:16.207Z">
+<meta property="og:updated_time" content="2018-09-01T03:49:02.352Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="单目相机中的三角化测量">
 <meta name="twitter:description" content="关于学习SLAM问题中如何利用三角化测量确定特征点在三维空间中的位置。">
@@ -423,16 +423,16 @@
 
       
         <a id="more"></a>
-<h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>利用两幅图像以及匹配的特征点，我们已经能够利用对极几何估计相机的运动，即得到旋转矩阵$R$和平移向量$t$。但是如何进一步得到特征点在三维空间中的位置？这就涉及到三角化测量的方法。</p>
-<h1 id="三角化测量"><a href="#三角化测量" class="headerlink" title="三角化测量"></a>三角化测量</h1><p>假设P是三维空间中的某一点，在两幅图像中的像素坐标分别为$p_1$和$p_2$，在相机坐标系下的坐标为$c_{1}$和$c_{2}$，根据针孔相机中的坐标变换公式可知：<br>$z_{1}p_1=Kc_{1}$<br>$z_{2}p_2=Kc_{2}$<br>其中$z_{1}$是$c_{1}$在$Z$轴上的坐标，$z_{2}$是$c_{2}$在$Z$轴上的坐标，$K$是相机的内参矩阵。</p>
-<p>不妨令：<br>$p_1=Kx_{1}$<br>$p_2=Kx_{2}$<br>其中$x_{1},x_{2}$称为点P在相机坐标系下的归一化坐标。</p>
-<p>根据三维空间中的运动模型有：<br>$c_2 = Rc_1 + t \\<br>k^{-1}z_1p_1 = R k^{-1}z_2p_2 + t \\<br>z_1 x_1 = z_2 R x_2 + t$</p>
-<p>同时左乘$x_1$的反对称矩阵可得：</p>
+<h1 id="&#x6458;&#x8981;"><a href="#&#x6458;&#x8981;" class="headerlink" title="&#x6458;&#x8981;"></a>&#x6458;&#x8981;</h1><p>&#x5229;&#x7528;&#x4E24;&#x5E45;&#x56FE;&#x50CF;&#x4EE5;&#x53CA;&#x5339;&#x914D;&#x7684;&#x7279;&#x5F81;&#x70B9;&#xFF0C;&#x6211;&#x4EEC;&#x5DF2;&#x7ECF;&#x80FD;&#x591F;&#x5229;&#x7528;&#x5BF9;&#x6781;&#x51E0;&#x4F55;&#x4F30;&#x8BA1;&#x76F8;&#x673A;&#x7684;&#x8FD0;&#x52A8;&#xFF0C;&#x5373;&#x5F97;&#x5230;&#x65CB;&#x8F6C;&#x77E9;&#x9635;$R$&#x548C;&#x5E73;&#x79FB;&#x5411;&#x91CF;$t$&#x3002;&#x4F46;&#x662F;&#x5982;&#x4F55;&#x8FDB;&#x4E00;&#x6B65;&#x5F97;&#x5230;&#x7279;&#x5F81;&#x70B9;&#x5728;&#x4E09;&#x7EF4;&#x7A7A;&#x95F4;&#x4E2D;&#x7684;&#x4F4D;&#x7F6E;&#xFF1F;&#x8FD9;&#x5C31;&#x6D89;&#x53CA;&#x5230;&#x4E09;&#x89D2;&#x5316;&#x6D4B;&#x91CF;&#x7684;&#x65B9;&#x6CD5;&#x3002;</p>
+<h1 id="&#x4E09;&#x89D2;&#x5316;&#x6D4B;&#x91CF;"><a href="#&#x4E09;&#x89D2;&#x5316;&#x6D4B;&#x91CF;" class="headerlink" title="&#x4E09;&#x89D2;&#x5316;&#x6D4B;&#x91CF;"></a>&#x4E09;&#x89D2;&#x5316;&#x6D4B;&#x91CF;</h1><p>&#x5047;&#x8BBE;P&#x662F;&#x4E09;&#x7EF4;&#x7A7A;&#x95F4;&#x4E2D;&#x7684;&#x67D0;&#x4E00;&#x70B9;&#xFF0C;&#x5728;&#x4E24;&#x5E45;&#x56FE;&#x50CF;&#x4E2D;&#x7684;&#x50CF;&#x7D20;&#x5750;&#x6807;&#x5206;&#x522B;&#x4E3A;$p_1$&#x548C;$p_2$&#xFF0C;&#x5728;&#x76F8;&#x673A;&#x5750;&#x6807;&#x7CFB;&#x4E0B;&#x7684;&#x5750;&#x6807;&#x4E3A;$c_{1}$&#x548C;$c_{2}$&#xFF0C;&#x6839;&#x636E;&#x9488;&#x5B54;&#x76F8;&#x673A;&#x4E2D;&#x7684;&#x5750;&#x6807;&#x53D8;&#x6362;&#x516C;&#x5F0F;&#x53EF;&#x77E5;&#xFF1A;<br>$z_{1}p_1=Kc_{1}$<br>$z_{2}p_2=Kc_{2}$<br>&#x5176;&#x4E2D;$z_{1}$&#x662F;$c_{1}$&#x5728;$Z$&#x8F74;&#x4E0A;&#x7684;&#x5750;&#x6807;&#xFF0C;$z_{2}$&#x662F;$c_{2}$&#x5728;$Z$&#x8F74;&#x4E0A;&#x7684;&#x5750;&#x6807;&#xFF0C;$K$&#x662F;&#x76F8;&#x673A;&#x7684;&#x5185;&#x53C2;&#x77E9;&#x9635;&#x3002;</p>
+<p>&#x4E0D;&#x59A8;&#x4EE4;&#xFF1A;<br>$p_1=Kx_{1}$<br>$p_2=Kx_{2}$<br>&#x5176;&#x4E2D;$x_{1},x_{2}$&#x79F0;&#x4E3A;&#x70B9;P&#x5728;&#x76F8;&#x673A;&#x5750;&#x6807;&#x7CFB;&#x4E0B;&#x7684;&#x5F52;&#x4E00;&#x5316;&#x5750;&#x6807;&#x3002;</p>
+<p>&#x6839;&#x636E;&#x4E09;&#x7EF4;&#x7A7A;&#x95F4;&#x4E2D;&#x7684;&#x8FD0;&#x52A8;&#x6A21;&#x578B;&#x6709;&#xFF1A;<br>$c_2 = Rc_1 + t \\<br>k^{-1}z_1p_1 = R k^{-1}z_2p_2 + t \\<br>z_1 x_1 = z_2 R x_2 + t$</p>
+<p>&#x540C;&#x65F6;&#x5DE6;&#x4E58;$x_1$&#x7684;&#x53CD;&#x5BF9;&#x79F0;&#x77E9;&#x9635;&#x53EF;&#x5F97;&#xFF1A;</p>
 <p>$z_1 [x_1]_{\times} x_1 = 0 = z_2 [x_1]_{\times}Rx_2 + [x_1]_{\times}t$</p>
-<p>上述等式的右边是个关于未知变量$z_2$的方程，求解此方程即可得到$z_2$。有了$z_2$，$z_1$也就迎刄而解了。</p>
-<p>但由于误差的存在，上述方程通常不会严格成立，所以更常见的做法是求最小二乘解而不是零解。</p>
-<h1 id="三角测量的矛盾"><a href="#三角测量的矛盾" class="headerlink" title="三角测量的矛盾"></a>三角测量的矛盾</h1><p>三角化测量的前提是两幅图像之间存在平移。有平移才会由对极几何中的三角形，才谈得上三角化测量。<br>如下图所示，当平移很小时，深度估计的不确定性会增大。因此要使深度的精确度增加，则需要增加平移，但是增加平移会导致图像的外观发生明显的变化，使得特征提取和匹配的难度增加，这称为三角测量的矛盾。<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/Triangularization-01.png"></p>
-<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><p>1.《视觉SLAM十四讲》第七讲</p>
+<p>&#x4E0A;&#x8FF0;&#x7B49;&#x5F0F;&#x7684;&#x53F3;&#x8FB9;&#x662F;&#x4E2A;&#x5173;&#x4E8E;&#x672A;&#x77E5;&#x53D8;&#x91CF;$z_2$&#x7684;&#x65B9;&#x7A0B;&#xFF0C;&#x6C42;&#x89E3;&#x6B64;&#x65B9;&#x7A0B;&#x5373;&#x53EF;&#x5F97;&#x5230;$z_2$&#x3002;&#x6709;&#x4E86;$z_2$&#xFF0C;$z_1$&#x4E5F;&#x5C31;&#x8FCE;&#x5204;&#x800C;&#x89E3;&#x4E86;&#x3002;</p>
+<p>&#x4F46;&#x7531;&#x4E8E;&#x8BEF;&#x5DEE;&#x7684;&#x5B58;&#x5728;&#xFF0C;&#x4E0A;&#x8FF0;&#x65B9;&#x7A0B;&#x901A;&#x5E38;&#x4E0D;&#x4F1A;&#x4E25;&#x683C;&#x6210;&#x7ACB;&#xFF0C;&#x6240;&#x4EE5;&#x66F4;&#x5E38;&#x89C1;&#x7684;&#x505A;&#x6CD5;&#x662F;&#x6C42;&#x6700;&#x5C0F;&#x4E8C;&#x4E58;&#x89E3;&#x800C;&#x4E0D;&#x662F;&#x96F6;&#x89E3;&#x3002;</p>
+<h1 id="&#x4E09;&#x89D2;&#x6D4B;&#x91CF;&#x7684;&#x77DB;&#x76FE;"><a href="#&#x4E09;&#x89D2;&#x6D4B;&#x91CF;&#x7684;&#x77DB;&#x76FE;" class="headerlink" title="&#x4E09;&#x89D2;&#x6D4B;&#x91CF;&#x7684;&#x77DB;&#x76FE;"></a>&#x4E09;&#x89D2;&#x6D4B;&#x91CF;&#x7684;&#x77DB;&#x76FE;</h1><p>&#x4E09;&#x89D2;&#x5316;&#x6D4B;&#x91CF;&#x7684;&#x524D;&#x63D0;&#x662F;&#x4E24;&#x5E45;&#x56FE;&#x50CF;&#x4E4B;&#x95F4;&#x5B58;&#x5728;&#x5E73;&#x79FB;&#x3002;&#x6709;&#x5E73;&#x79FB;&#x624D;&#x4F1A;&#x7531;&#x5BF9;&#x6781;&#x51E0;&#x4F55;&#x4E2D;&#x7684;&#x4E09;&#x89D2;&#x5F62;&#xFF0C;&#x624D;&#x8C08;&#x5F97;&#x4E0A;&#x4E09;&#x89D2;&#x5316;&#x6D4B;&#x91CF;&#x3002;<br>&#x5982;&#x4E0B;&#x56FE;&#x6240;&#x793A;&#xFF0C;&#x5F53;&#x5E73;&#x79FB;&#x5F88;&#x5C0F;&#x65F6;&#xFF0C;&#x6DF1;&#x5EA6;&#x4F30;&#x8BA1;&#x7684;&#x4E0D;&#x786E;&#x5B9A;&#x6027;&#x4F1A;&#x589E;&#x5927;&#x3002;&#x56E0;&#x6B64;&#x8981;&#x4F7F;&#x6DF1;&#x5EA6;&#x7684;&#x7CBE;&#x786E;&#x5EA6;&#x589E;&#x52A0;&#xFF0C;&#x5219;&#x9700;&#x8981;&#x589E;&#x52A0;&#x5E73;&#x79FB;&#xFF0C;&#x4F46;&#x662F;&#x589E;&#x52A0;&#x5E73;&#x79FB;&#x4F1A;&#x5BFC;&#x81F4;&#x56FE;&#x50CF;&#x7684;&#x5916;&#x89C2;&#x53D1;&#x751F;&#x660E;&#x663E;&#x7684;&#x53D8;&#x5316;&#xFF0C;&#x4F7F;&#x5F97;&#x7279;&#x5F81;&#x63D0;&#x53D6;&#x548C;&#x5339;&#x914D;&#x7684;&#x96BE;&#x5EA6;&#x589E;&#x52A0;&#xFF0C;&#x8FD9;&#x79F0;&#x4E3A;&#x4E09;&#x89D2;&#x6D4B;&#x91CF;&#x7684;&#x77DB;&#x76FE;&#x3002;<br><img alt="..." src="http://oeaxm0g1o.bkt.clouddn.com/images/Triangularization-01.png"></p>
+<h1 id="&#x53C2;&#x8003;&#x6587;&#x732E;"><a href="#&#x53C2;&#x8003;&#x6587;&#x732E;" class="headerlink" title="&#x53C2;&#x8003;&#x6587;&#x732E;"></a>&#x53C2;&#x8003;&#x6587;&#x732E;</h1><p>1.&#x300A;&#x89C6;&#x89C9;SLAM&#x5341;&#x56DB;&#x8BB2;&#x300B;&#x7B2C;&#x4E03;&#x8BB2;</p>
 
       
     </div>

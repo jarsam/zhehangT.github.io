@@ -85,7 +85,7 @@
 <meta property="og:url" content="https://zhehangt.github.io/2017/03/17/SLAM/ICP/index.html">
 <meta property="og:site_name" content="一索哥传奇">
 <meta property="og:description" content="关于学习SLAM问题中如何利用一组匹配好的三维点坐标估计运动估计的简单记录。">
-<meta property="og:updated_time" content="2017-05-06T12:48:11.834Z">
+<meta property="og:updated_time" content="2018-09-01T03:49:02.352Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="3D-3D的运动估计">
 <meta name="twitter:description" content="关于学习SLAM问题中如何利用一组匹配好的三维点坐标估计运动估计的简单记录。">
@@ -421,25 +421,25 @@
 
       
         <a id="more"></a>
-<h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>3D-3D的位姿估计问题是指，对于空间中的某一点，我们知道这个点在两个相机坐标系中的三维坐标，如何利用这两个三维坐标来求解这两个相机坐标系的运动就是3D-3D的位姿评估问题。</p>
-<p>这个问题通常用迭代最近点(Iterative Closest Point,ICP)求解。</p>
-<p>假设空间中的一系列点在第一个相机坐标系下的三维坐标为$C={c_1,…,c_n}$，在第二个相机坐标系下匹配的三维坐标为$C’={c_1’,…,c’_n}$。则有：<br>$\forall i, \ c_i=Rc_i’+t $ </p>
-<p>对于ICP的求解主要分为两种方式：利用线性代数的求解和利用非线性优化方式求解。</p>
-<h1 id="线性代数求解"><a href="#线性代数求解" class="headerlink" title="线性代数求解"></a>线性代数求解</h1><p>构造误差项：<br>$e_i = c_i - (Rc_i’+t) $ </p>
-<p>将这个误差项构造成一个最小二乘问题：</p>
-<p>$\min \limits _{R,t} J= \dfrac{1}{2} \sum \limits _{i=1} ^n \begin{Vmatrix}<br>c_i - (Rc_i’+t)<br>\end{Vmatrix} _2 ^2$</p>
-<p>通过求解这个最小二乘问题，我们可以得到$R$和$t$。</p>
-<p>求解过程真心没看懂啊。</p>
-<p>首先计算两组点的质心：<br>$p=\dfrac{1}{n} \sum \limits _{i=1}^n p_i \\<br>p’=\dfrac{1}{n} \sum \limits _{i=1}^n p’_i<br>$ </p>
-<p>然后计算每个点的去质心坐标：<br>$q_i = p_i - p \\<br>q_i’ = p’_i - p’<br>$ </p>
-<p>接着构造矩阵：<br>$W=\sum \limits _{i=1}^n q_i  {q’}_i^T $ </p>
-<p>W是一个3x3的矩阵，对W进行SVD分解，得：<br>$W=U \Sigma V^T$ </p>
-<p>当$W$满秩时，$R$为：<br>$R=UV^T$<br>求得$R$后，$t$也就可以求出来了。</p>
-<h1 id="非线性优化方法"><a href="#非线性优化方法" class="headerlink" title="非线性优化方法"></a>非线性优化方法</h1><p>非线性优化方法通过迭代的方式去寻找最优值。首先要用李代数来表达位姿，即：</p>
-<p>$\min \limits _{\xi} J= \dfrac{1}{2} \sum \limits _{i=1} ^n \begin{Vmatrix}<br>c_i - \exp([\xi]_{\times}c_i’)<br>\end{Vmatrix} _2 ^2$</p>
-<p>然后通过对李代数求导和迭代的方式计算极小值。我们之前讨论的李代数求导终于派上了用场。<br>而且在这个问题中，已经有理论可以证明ICP问题存在唯一解或无穷多解。在唯一解的情况下，只要能找到极小值解，这个极小值就是全局最优值。</p>
-<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><ol>
-<li>《视觉SLAM十四讲》第七讲</li>
+<h1 id="&#x6458;&#x8981;"><a href="#&#x6458;&#x8981;" class="headerlink" title="&#x6458;&#x8981;"></a>&#x6458;&#x8981;</h1><p>3D-3D&#x7684;&#x4F4D;&#x59FF;&#x4F30;&#x8BA1;&#x95EE;&#x9898;&#x662F;&#x6307;&#xFF0C;&#x5BF9;&#x4E8E;&#x7A7A;&#x95F4;&#x4E2D;&#x7684;&#x67D0;&#x4E00;&#x70B9;&#xFF0C;&#x6211;&#x4EEC;&#x77E5;&#x9053;&#x8FD9;&#x4E2A;&#x70B9;&#x5728;&#x4E24;&#x4E2A;&#x76F8;&#x673A;&#x5750;&#x6807;&#x7CFB;&#x4E2D;&#x7684;&#x4E09;&#x7EF4;&#x5750;&#x6807;&#xFF0C;&#x5982;&#x4F55;&#x5229;&#x7528;&#x8FD9;&#x4E24;&#x4E2A;&#x4E09;&#x7EF4;&#x5750;&#x6807;&#x6765;&#x6C42;&#x89E3;&#x8FD9;&#x4E24;&#x4E2A;&#x76F8;&#x673A;&#x5750;&#x6807;&#x7CFB;&#x7684;&#x8FD0;&#x52A8;&#x5C31;&#x662F;3D-3D&#x7684;&#x4F4D;&#x59FF;&#x8BC4;&#x4F30;&#x95EE;&#x9898;&#x3002;</p>
+<p>&#x8FD9;&#x4E2A;&#x95EE;&#x9898;&#x901A;&#x5E38;&#x7528;&#x8FED;&#x4EE3;&#x6700;&#x8FD1;&#x70B9;(Iterative Closest Point,ICP)&#x6C42;&#x89E3;&#x3002;</p>
+<p>&#x5047;&#x8BBE;&#x7A7A;&#x95F4;&#x4E2D;&#x7684;&#x4E00;&#x7CFB;&#x5217;&#x70B9;&#x5728;&#x7B2C;&#x4E00;&#x4E2A;&#x76F8;&#x673A;&#x5750;&#x6807;&#x7CFB;&#x4E0B;&#x7684;&#x4E09;&#x7EF4;&#x5750;&#x6807;&#x4E3A;$C={c_1,&#x2026;,c_n}$&#xFF0C;&#x5728;&#x7B2C;&#x4E8C;&#x4E2A;&#x76F8;&#x673A;&#x5750;&#x6807;&#x7CFB;&#x4E0B;&#x5339;&#x914D;&#x7684;&#x4E09;&#x7EF4;&#x5750;&#x6807;&#x4E3A;$C&#x2019;={c_1&#x2019;,&#x2026;,c&#x2019;_n}$&#x3002;&#x5219;&#x6709;&#xFF1A;<br>$\forall i, \ c_i=Rc_i&#x2019;+t $ </p>
+<p>&#x5BF9;&#x4E8E;ICP&#x7684;&#x6C42;&#x89E3;&#x4E3B;&#x8981;&#x5206;&#x4E3A;&#x4E24;&#x79CD;&#x65B9;&#x5F0F;&#xFF1A;&#x5229;&#x7528;&#x7EBF;&#x6027;&#x4EE3;&#x6570;&#x7684;&#x6C42;&#x89E3;&#x548C;&#x5229;&#x7528;&#x975E;&#x7EBF;&#x6027;&#x4F18;&#x5316;&#x65B9;&#x5F0F;&#x6C42;&#x89E3;&#x3002;</p>
+<h1 id="&#x7EBF;&#x6027;&#x4EE3;&#x6570;&#x6C42;&#x89E3;"><a href="#&#x7EBF;&#x6027;&#x4EE3;&#x6570;&#x6C42;&#x89E3;" class="headerlink" title="&#x7EBF;&#x6027;&#x4EE3;&#x6570;&#x6C42;&#x89E3;"></a>&#x7EBF;&#x6027;&#x4EE3;&#x6570;&#x6C42;&#x89E3;</h1><p>&#x6784;&#x9020;&#x8BEF;&#x5DEE;&#x9879;&#xFF1A;<br>$e_i = c_i - (Rc_i&#x2019;+t) $ </p>
+<p>&#x5C06;&#x8FD9;&#x4E2A;&#x8BEF;&#x5DEE;&#x9879;&#x6784;&#x9020;&#x6210;&#x4E00;&#x4E2A;&#x6700;&#x5C0F;&#x4E8C;&#x4E58;&#x95EE;&#x9898;&#xFF1A;</p>
+<p>$\min \limits _{R,t} J= \dfrac{1}{2} \sum \limits _{i=1} ^n \begin{Vmatrix}<br>c_i - (Rc_i&#x2019;+t)<br>\end{Vmatrix} _2 ^2$</p>
+<p>&#x901A;&#x8FC7;&#x6C42;&#x89E3;&#x8FD9;&#x4E2A;&#x6700;&#x5C0F;&#x4E8C;&#x4E58;&#x95EE;&#x9898;&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x5F97;&#x5230;$R$&#x548C;$t$&#x3002;</p>
+<p>&#x6C42;&#x89E3;&#x8FC7;&#x7A0B;&#x771F;&#x5FC3;&#x6CA1;&#x770B;&#x61C2;&#x554A;&#x3002;</p>
+<p>&#x9996;&#x5148;&#x8BA1;&#x7B97;&#x4E24;&#x7EC4;&#x70B9;&#x7684;&#x8D28;&#x5FC3;&#xFF1A;<br>$p=\dfrac{1}{n} \sum \limits _{i=1}^n p_i \\<br>p&#x2019;=\dfrac{1}{n} \sum \limits _{i=1}^n p&#x2019;_i<br>$ </p>
+<p>&#x7136;&#x540E;&#x8BA1;&#x7B97;&#x6BCF;&#x4E2A;&#x70B9;&#x7684;&#x53BB;&#x8D28;&#x5FC3;&#x5750;&#x6807;&#xFF1A;<br>$q_i = p_i - p \\<br>q_i&#x2019; = p&#x2019;_i - p&#x2019;<br>$ </p>
+<p>&#x63A5;&#x7740;&#x6784;&#x9020;&#x77E9;&#x9635;&#xFF1A;<br>$W=\sum \limits _{i=1}^n q_i  {q&#x2019;}_i^T $ </p>
+<p>W&#x662F;&#x4E00;&#x4E2A;3x3&#x7684;&#x77E9;&#x9635;&#xFF0C;&#x5BF9;W&#x8FDB;&#x884C;SVD&#x5206;&#x89E3;&#xFF0C;&#x5F97;&#xFF1A;<br>$W=U \Sigma V^T$ </p>
+<p>&#x5F53;$W$&#x6EE1;&#x79E9;&#x65F6;&#xFF0C;$R$&#x4E3A;&#xFF1A;<br>$R=UV^T$<br>&#x6C42;&#x5F97;$R$&#x540E;&#xFF0C;$t$&#x4E5F;&#x5C31;&#x53EF;&#x4EE5;&#x6C42;&#x51FA;&#x6765;&#x4E86;&#x3002;</p>
+<h1 id="&#x975E;&#x7EBF;&#x6027;&#x4F18;&#x5316;&#x65B9;&#x6CD5;"><a href="#&#x975E;&#x7EBF;&#x6027;&#x4F18;&#x5316;&#x65B9;&#x6CD5;" class="headerlink" title="&#x975E;&#x7EBF;&#x6027;&#x4F18;&#x5316;&#x65B9;&#x6CD5;"></a>&#x975E;&#x7EBF;&#x6027;&#x4F18;&#x5316;&#x65B9;&#x6CD5;</h1><p>&#x975E;&#x7EBF;&#x6027;&#x4F18;&#x5316;&#x65B9;&#x6CD5;&#x901A;&#x8FC7;&#x8FED;&#x4EE3;&#x7684;&#x65B9;&#x5F0F;&#x53BB;&#x5BFB;&#x627E;&#x6700;&#x4F18;&#x503C;&#x3002;&#x9996;&#x5148;&#x8981;&#x7528;&#x674E;&#x4EE3;&#x6570;&#x6765;&#x8868;&#x8FBE;&#x4F4D;&#x59FF;&#xFF0C;&#x5373;&#xFF1A;</p>
+<p>$\min \limits _{\xi} J= \dfrac{1}{2} \sum \limits _{i=1} ^n \begin{Vmatrix}<br>c_i - \exp([\xi]_{\times}c_i&#x2019;)<br>\end{Vmatrix} _2 ^2$</p>
+<p>&#x7136;&#x540E;&#x901A;&#x8FC7;&#x5BF9;&#x674E;&#x4EE3;&#x6570;&#x6C42;&#x5BFC;&#x548C;&#x8FED;&#x4EE3;&#x7684;&#x65B9;&#x5F0F;&#x8BA1;&#x7B97;&#x6781;&#x5C0F;&#x503C;&#x3002;&#x6211;&#x4EEC;&#x4E4B;&#x524D;&#x8BA8;&#x8BBA;&#x7684;&#x674E;&#x4EE3;&#x6570;&#x6C42;&#x5BFC;&#x7EC8;&#x4E8E;&#x6D3E;&#x4E0A;&#x4E86;&#x7528;&#x573A;&#x3002;<br>&#x800C;&#x4E14;&#x5728;&#x8FD9;&#x4E2A;&#x95EE;&#x9898;&#x4E2D;&#xFF0C;&#x5DF2;&#x7ECF;&#x6709;&#x7406;&#x8BBA;&#x53EF;&#x4EE5;&#x8BC1;&#x660E;ICP&#x95EE;&#x9898;&#x5B58;&#x5728;&#x552F;&#x4E00;&#x89E3;&#x6216;&#x65E0;&#x7A77;&#x591A;&#x89E3;&#x3002;&#x5728;&#x552F;&#x4E00;&#x89E3;&#x7684;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;&#x53EA;&#x8981;&#x80FD;&#x627E;&#x5230;&#x6781;&#x5C0F;&#x503C;&#x89E3;&#xFF0C;&#x8FD9;&#x4E2A;&#x6781;&#x5C0F;&#x503C;&#x5C31;&#x662F;&#x5168;&#x5C40;&#x6700;&#x4F18;&#x503C;&#x3002;</p>
+<h1 id="&#x53C2;&#x8003;&#x6587;&#x732E;"><a href="#&#x53C2;&#x8003;&#x6587;&#x732E;" class="headerlink" title="&#x53C2;&#x8003;&#x6587;&#x732E;"></a>&#x53C2;&#x8003;&#x6587;&#x732E;</h1><ol>
+<li>&#x300A;&#x89C6;&#x89C9;SLAM&#x5341;&#x56DB;&#x8BB2;&#x300B;&#x7B2C;&#x4E03;&#x8BB2;</li>
 </ol>
 
       
