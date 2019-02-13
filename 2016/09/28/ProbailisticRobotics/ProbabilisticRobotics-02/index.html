@@ -85,12 +85,10 @@
 <meta property="og:url" content="https://zhehangt.github.io/2016/09/28/ProbailisticRobotics/ProbabilisticRobotics-02/index.html">
 <meta property="og:site_name" content="一索哥传奇">
 <meta property="og:description" content="《Probabilistic Robotics》第二章节论述了概率机器人学中的相关术语和数学工具">
-<meta property="og:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/ProbabilisticRobotics-02-01.png">
-<meta property="og:updated_time" content="2018-09-01T03:49:02.352Z">
+<meta property="og:updated_time" content="2019-02-13T09:04:53.615Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《Probabilistic Robotics》 读书笔记 02">
 <meta name="twitter:description" content="《Probabilistic Robotics》第二章节论述了概率机器人学中的相关术语和数学工具">
-<meta name="twitter:image" content="http://oeaxm0g1o.bkt.clouddn.com/images/ProbabilisticRobotics-02-01.png">
 
 
 
@@ -456,7 +454,7 @@
 <p>&#x4F46;&#x662F;&#x5F80;&#x5F80;&#x5728;&#x5F97;&#x5230;&#x6D4B;&#x91CF;&#x6570;&#x636E; $z_t$ &#x4E4B;&#x524D;&#x5BF9; $x_t$ &#x7684;&#x53EF;&#x4FE1;&#x5EA6;&#x8FDB;&#x884C;&#x8BA1;&#x7B97;&#xFF0C;&#x4F5C;&#x4E3A;&#x4E00;&#x79CD;&#x5BF9; $x_t$ &#x7684;&#x9884;&#x6D4B;&#xFF0C;&#x5373;&#xFF1A;<br>$\overline{bel(x_t)} = p(x_t \mid z_{1:t-1},u_{1:t})$</p>
 <p>&#x901A;&#x8FC7;$\overline{bel(x_t)}$&#x8BA1;&#x7B97;$bel(x_t)$&#x79F0;&#x4E3A;&#x4FEE;&#x6B63;&#x6216;&#x8005;&#x6D4B;&#x91CF;&#x66F4;&#x65B0;&#x3002;</p>
 <p>&#x6982;&#x7387;&#x673A;&#x5668;&#x4EBA;&#x5B66;&#x89E3;&#x51B3;&#x95EE;&#x9898;&#x7684;&#x9014;&#x5F84;&#x5F80;&#x5F80;&#x5C31;&#x662F;&#x901A;&#x8FC7;&#x8BA1;&#x7B97;&#x72B6;&#x6001;&#x53EF;&#x4FE1;&#x5EA6;&#xFF0C;&#x4ECE;&#x4E2D;&#x9009;&#x62E9;&#x53EF;&#x4FE1;&#x5EA6;&#x6700;&#x9AD8;&#x7684;&#x72B6;&#x6001;&#xFF0C;&#x4F5C;&#x4E3A;&#x5F53;&#x524D;&#x673A;&#x5668;&#x4EBA;&#x7684;&#x72B6;&#x6001;&#x3002;</p>
-<h1 id="&#x8D1D;&#x53F6;&#x65AF;&#x6EE4;&#x6CE2;"><a href="#&#x8D1D;&#x53F6;&#x65AF;&#x6EE4;&#x6CE2;" class="headerlink" title="&#x8D1D;&#x53F6;&#x65AF;&#x6EE4;&#x6CE2;"></a>&#x8D1D;&#x53F6;&#x65AF;&#x6EE4;&#x6CE2;</h1><p><strong>&#x8D1D;&#x53F6;&#x65AF;&#x6EE4;&#x6CE2;&#x7B97;&#x6CD5;</strong>&#x662F;&#x6700;&#x4E3A;&#x5E38;&#x7528;&#x7684;&#x8BA1;&#x7B97;&#x53EF;&#x4FE1;&#x5EA6;&#x7684;&#x7B97;&#x6CD5;&#x3002;&#x7B97;&#x6CD5;&#x6D41;&#x7A0B;&#x5982;&#x4E0B;&#xFF1A;<br><img title="&#x8D1D;&#x53F6;&#x65AF;&#x6EE4;&#x6CE2;&#x7B97;&#x6CD5;" alt="&#x56FE;&#x7247;&#x8BF4;&#x660E;" src="http://oeaxm0g1o.bkt.clouddn.com/images/ProbabilisticRobotics-02-01.png"></p>
+<h1 id="&#x8D1D;&#x53F6;&#x65AF;&#x6EE4;&#x6CE2;"><a href="#&#x8D1D;&#x53F6;&#x65AF;&#x6EE4;&#x6CE2;" class="headerlink" title="&#x8D1D;&#x53F6;&#x65AF;&#x6EE4;&#x6CE2;"></a>&#x8D1D;&#x53F6;&#x65AF;&#x6EE4;&#x6CE2;</h1><p><strong>&#x8D1D;&#x53F6;&#x65AF;&#x6EE4;&#x6CE2;&#x7B97;&#x6CD5;</strong>&#x662F;&#x6700;&#x4E3A;&#x5E38;&#x7528;&#x7684;&#x8BA1;&#x7B97;&#x53EF;&#x4FE1;&#x5EA6;&#x7684;&#x7B97;&#x6CD5;&#x3002;&#x7B97;&#x6CD5;&#x6D41;&#x7A0B;&#x5982;&#x4E0B;&#xFF1A;<br>!()[1.png]</p>
 <p>&#x76F4;&#x89C2;&#x4E0A;&#x8BB2;&#x5C31;&#x662F;&#x6839;&#x636E;&#x72B6;&#x6001;&#x8F6C;&#x79FB;&#x6982;&#x7387;&#x548C;&#x524D;&#x4E00;&#x65F6;&#x523B;&#x7684;&#x72B6;&#x6001;&#x53EF;&#x4FE1;&#x5EA6;&#x5F97;&#x51FA;&#x5F53;&#x524D;&#x72B6;&#x6001;&#x53EF;&#x4FE1;&#x5EA6;&#x7684;&#x731C;&#x6D4B;&#xFF0C;&#x7136;&#x540E;&#x518D;&#x5229;&#x7528;&#x6D4B;&#x91CF;&#x6982;&#x7387;&#x5BF9;&#x731C;&#x6D4B;&#x8FDB;&#x884C;&#x4FEE;&#x6B63;&#x3002;</p>
 <blockquote>
 <p>&#x4E66;&#x4E2D;&#x7ED9;&#x51FA;&#x4E86;&#x4E25;&#x683C;&#x7684;&#x6570;&#x5B66;&#x63A8;&#x5BFC;&#x6765;&#x8BC1;&#x660E;&#x8D1D;&#x53F6;&#x65AF;&#x6EE4;&#x6CE2;&#x7684;&#x6B63;&#x786E;&#x6027;&#x3002;&#x89C1;2.4.3&#x5C0F;&#x8282;&#x3002;</p>
