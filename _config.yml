@@ -83,27 +83,5 @@ deploy:
 
 
 
-qiniu:
-  offline: false
-  sync: true
-  bucket: images
-  secret_file: secret_file
-  access_key: 
-  secret_key: 
-  dirPrefix:
-  urlPrefix: http://oeaxm0g1o.bkt.clouddn.com
-  up_host: http://upload.qiniu.com
-  local_dir: qnsource
-  update_exist: true
-  image: 
-    folder: images
-    extend: 
-  js:
-    folder: js
-  css:
-    folder: css
-
-
-
 
   	

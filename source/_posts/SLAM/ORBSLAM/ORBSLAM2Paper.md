@@ -27,7 +27,7 @@ ORB-SLAM2的框架和ORB-SLAM的框架几乎是一模一样的，包含了三个
 
 **A.Monocular, Close Stereo and Far Stereo Keypoints**
 ORB-SLAM2是基于特征的SLAM系统，因此当从输入的图像中提取特征之后，图像不需要被保存而是直接丢弃，因此可以说ORB-SLAM2与传感器之间是相互独立的，重要的还是特征提取的过程，如图所示。
-{% qnimg ORBSLAM2Paper-01.png title: ... alt:... %}
+![](1.png)
 
 **Steroe keypoints**
 Steroe Keypoints用三维坐标$X\_s=(u\_L, v\_L, v\_R)$来定义。其中$(u\_L, v\_L)$表示左边图像的像素点坐标，$v\_R$表示右边图像的横坐标。

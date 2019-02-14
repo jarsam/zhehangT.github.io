@@ -43,14 +43,14 @@ $p\_{rand}(z\_t^k \mid x\_t, m)=\begin{cases}
 \end{cases}$
 
 基于以上四种误差计算测量概率算法如下：
-{% qnimg ProbabilisticRobotics-06-01.png title: ... alt:... %}
+![](1.png)
 
 其中输入为测量数据$z\_t$, 机器人的位姿$x\_t$ 和地图信息$m$，$z\_{hit},z\_{short},z\_{max},z\_{rand}$分别为各个误差的权重。输出为当前观测$z\_t$的概率。
 
 在上述的模型中，存在很多未知的参数。
 第一种参数设置的方式是根据经验手工设置参数。
 第二种参数设置方式是根据数据得到参数。用$Z$表示一系列的测量数据，$X$表示一系列对应的位置数据，$\Theta$表示参数，因此只需要找到使$p(Z \mid X, m, \Theta)$概率最大的参数即可。具体算法如下图：
-{% qnimg ProbabilisticRobotics-06-02.png title: ... alt:... %}
+![](2.png)
 
 关于算法的推导过程见书本6.3.3小节。
 
@@ -70,7 +70,7 @@ $p\_{hit}(z\_t^k \mid x\_t, m)=\varepsilon\_{\sigma\_{hit}^2}(dist^2)$
 3.随机误差。
 
 概率域模型计算测量概率算法如下
-{% qnimg ProbabilisticRobotics-06-03.png title: ... alt:... %}
+![](3.png)
 
 其中$(x\_{z\_t^k} \ y\_{z\_t^k})$为检测到的障碍物经过转换后在全局坐标系中的坐标。$(x' \ y')$是实际地图中最接近检测到的障碍物的实际障碍物的坐标。这个搜索过程也是该算法中开销最大的步骤。$z\_{random}$是随机误差的权重。
 
@@ -102,11 +102,11 @@ $f(z\_t)=\\{f\_t^1,f\_t^2,...\\}=\\{(r\_t^1, \phi\_t^1, s\_t^1), (r\_t^2, \phi\_
 $p(f(z\_t) \mid x\_t,m)=\prod\_i p(r\_t^i, \phi\_t^i, s\_t^i \mid x\_t, m)$
 
 若知道测量数据与哪个路标相对应，则可用以下算法计算测量概率：
-{% qnimg ProbabilisticRobotics-06-04.png title: ... alt:... %}
+![](4.png)
 其中$c\_t^i$表示测量数据对应路标的索引。
 
 还有一种基于采样的方法，可以得到机器人的位姿：
-{% qnimg ProbabilisticRobotics-06-05.png title: ... alt:... %}
+![](5.png)
 
 
 以上基于特征的算法都假设特征与路标的关联关系是已知的，对于未知情况，即未知空间的探索，将在定位与地图构建章节展开详细论述。

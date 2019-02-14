@@ -31,7 +31,7 @@ $bel(x_0)=p(x_0)$
 基于以上三个假设即可证明任意时刻的可信度函数$bel(x_t)$均满足高斯分布
 
 卡尔曼滤波算法的流程如图所示：
-{% qnimg ProbabilisticRobotics-03-01.png title:卡尔曼滤波 alt:图片说明 %}
+![](1.png)
 卡尔曼滤波的输出是t时刻的**状态可信度**$bel(x_t)$，通过均值$u_t$和协方差$\Sigma\_t$表示，输入是t-1时刻的**状态可信度**，通过均值$u\_{t-1}$和协方差$\Sigma\_{t-1}$表示，为了更新参数还需要t时刻的控制数据$\mu_t$和测量数据$z_t$
 第二行和第三行根据**控制数据**计算当前时刻状态可信度的预测值。
 第四行到第六行根据**测量数据**对预测值进行修正得到状态可信度。其中$K_t$称为卡尔曼增益。卡尔曼增益代表了观测数据对预测值的修正程度。$Q\_t$代表噪声$\delta _t$的方差。
@@ -49,7 +49,7 @@ $h(x\_t) \approx h(\bar \mu\_t)+h'(u\_t)(x\_t-\bar \mu\_t)
 \\\ \quad \ \ \   = h(\bar \mu\_t) + H\_t(x\_t-\bar \mu\_t) $
 
 扩展卡尔曼滤波算法的流程如图所示：
-{% qnimg ProbabilisticRobotics-03-02.png title:扩展卡尔曼滤波 alt:图片说明 %}
+![](2.png)
 
 扩展卡尔曼滤波的局限性在于通过泰勒展开来近似状态转移和观测，因此扩展卡尔曼滤波的准确程度依赖于状态转移和观测是否是线性近似的。
 其他的线性近似手段包括**无损卡尔曼滤波**和**矩匹配**(moments matching)
@@ -67,10 +67,10 @@ $p(x)=\mathbf{det}(2\pi\Sigma)^{-\frac{1}{2}} \mathbf{exp}\\{ -\frac{1}{2}\mu^T\
 $p(x)=\eta \ \mathbf{exp}\\{ -\frac{1}{2}x^T\Omega x + x^T \xi\\}$
 
 信息滤波算法的流程如图所示：
-{% qnimg ProbabilisticRobotics-03-03.png title:信息滤波 alt:图片说明 %}
+![](3.png)
 
 扩展信息滤波算法的流程如图所示：
-{% qnimg ProbabilisticRobotics-03-04.png title:扩展信息滤波 alt:图片说明 %}
+![](4.png)
 
 
 信息过滤有以下几个优缺点：

@@ -41,7 +41,7 @@ ORB-SLAM主要有以下几点优点：
 **A.Feature Choice**
 我们设计的主要思想之一就是用于建图和追踪的特征可以同时用于重定位和回环检测。这使得我们的系统更有效率。选择ORB特征[3]是因为其计算和匹配速度快，具备旋转不变性。ORB特征已经在位置识别中取得了很好的性能[4]。
 **B. Three Threads: Tracking, Local Mapping and Loop Closing**
-{% qnimg ORBSLAMPaper-01.png title: ... alt:... %}
+![](1.png)
 
 如图1所示，系统共有Tracking，Local Mapping和Loop Closing三个线程在同时运行。
 Tracking：基于每一帧来对地图进行定位，并会决定什么时候插入新的关键帧。通过与前一帧进行特征匹配来对当前帧的位姿进行初始化估计，然后用motion-only BA对位姿作进一步优化。当Tracking丢失时通过位置识别来进行全局的定位。完成了与前一帧的匹配和位姿估计之后，可以通过得到的位姿将与其他关键帧进行特征匹配，也就是从一个局部地图里面进行搜索匹配使相机位置得到进一步优化。最后Tracking线程来判断当前帧是不是关键帧。

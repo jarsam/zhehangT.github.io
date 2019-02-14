@@ -17,8 +17,8 @@ On-Manifold Preintegration for Real-Time Visual-Inertial Odometry提出了IMU预
 # IMU预积分模型
 这篇论文中的IMU预积分模型，与上一篇论文中的预积分模型基本保持一致。
 
-{% qnimg ORBIMU-08.png title: ... alt:... %}
-{% qnimg ORBIMU-09.png title: ... alt:... %}
+![](8.png)
+![](9.png)
 
 
 # Visual-Inertial ORB-SLAM
@@ -30,26 +30,26 @@ On-Manifold Preintegration for Real-Time Visual-Inertial Odometry提出了IMU预
 论文中根据当前是否更新了地图点，采用不同的优化方式。
 1）地图点被 Local Mapping 和 Loop Closing 线程更新
 此时IMU预积分误差项是建立在当前帧$j$和最近的一个关键帧$i$之间。状态估计问题建模为：
-{% qnimg ORBIMU-01.png title: ... alt:... %}
+![](1.png)
 
 视觉误差项
-{% qnimg ORBIMU-02.png title: ... alt:... %}
+![](2.png)
 
 IMU误差项
-{% qnimg ORBIMU-03.png title: ... alt:... %}
+![](3.png)
 
 要注意的是，这里的残差项使用了Huber损失函数和马式距离。
 利用g2o对公式（4）进行求解，其状态估计和Hessian矩阵将作为下一次更新的先验信息。
 
 2) 地图点没有发生更新
 此时IMU预积分误差项是建立在当前帧$j+1$和上一帧$j$之间，并利用之前已经计算得到的关于帧$j$的状态估计和Hessian矩阵建立额外的约束条件：
-{% qnimg ORBIMU-04.png title: ... alt:... %}
-{% qnimg ORBIMU-05.png title: ... alt:... %}
+![](4.png)
+![](5.png)
 
 
 **Local Mapping**
 对于Local Mapping线程的改动可以从下图中看出来。有了新的关键帧之后，将会对前N个关键帧进行优化，当前的关键帧（N+1）将固定不变，提供IMU预积分约束。将利用公式（5）和公式（6）建立优化问题的约束条件。
-{% qnimg ORBIMU-06.png title: ... alt:... %}
+![](6.png)
 
 Local Mapping的另外一个功能是管理关键帧。对与local BA，如果连续关键帧之间相差小于0.5s，则进行剔除。对于full BA，如果连续关键帧之间相差小于3s,则进行剔除。
 
@@ -61,19 +61,19 @@ IMU初始化对尺度，重力方向，速度和IMU偏差给出初始的估计�
 
 1）陀螺仪偏差估计
 陀螺仪的初始偏差估计比较简单，只需要根据ORB-SLAM求得的关键帧之间的旋转，对比利用IMU预积分模型求得的旋转，以偏差为变量，最小化两者的差值，如下图所示：
-{% qnimg ORBIMU-07.png title: ... alt:... %}
+![](7.png)
 
 式（9）的求解将基于高斯牛顿法进行。
 
 2）尺度和重力估计（忽略加速度偏差）
 首先关注尺度如何恢复。相机位姿的坐标$p\_c$与真实世界相差一个尺度$s$，可以用如下的公式表示：
-{% qnimg ORBIMU-10.png title: ... alt:... %}
+![](10.png)
 将公式（10）代入公式（3）可得：
-{% qnimg ORBIMU-11.png title: ... alt:... %}
+![](11.png)
 
 为了从等式（11）中求解尺度和重力，作者又开始了数学表演：
-{% qnimg ORBIMU-12.png title: ... alt:... %}
-{% qnimg ORBIMU-13.png title: ... alt:... %}
+![](12.png)
+![](13.png)
 
 式（11）到式（12）的目的就是将速度变量$v$消除。主要思路是通过连续的三个关键帧列出两个式（11）的等式，然后利用式（3）中的速度预积分方程，将其消除。
 
@@ -90,17 +90,17 @@ $A\_{3(N-2)\times 4} X\_{4 \times 1 } = B\_{3(N-2)\times 1}$是一个超定方�
 （刚开始一直以为世界坐标系就是惯性参考坐标系，其实并不是。最理想的世界坐标系当然是惯性参考坐标系，但是在实际中，世界坐标系往往是以第一帧的位姿作为世界坐标系的原点建立的，这与惯性参考坐标系有明显的区别）
 
 因此就可以计算惯性参考坐标系和世界坐标系之间的旋转矩阵$R\_{WI}$以及修正：
-{% qnimg ORBIMU-14.png title: ... alt:... %}
-{% qnimg ORBIMU-15.png title: ... alt:... %}
+![](14.png)
+![](15.png)
 
 由于计算$g\_w^\* $时未去除加速度偏差的影响，因此要得到理想的$g\_w$，需要对式（15）进行优化。假设其优化量为$\delta \theta$，则有：
-{% qnimg ORBIMU-16.png title: ... alt:... %}
-{% qnimg ORBIMU-17.png title: ... alt:... %}
+![](16.png)
+![](17.png)
 
 将（17）式代入（11）式，就会得到新的方程，这个方程包含了修正后的尺度$s$，重力方向的微调量$\delta \theta$和加速度偏差量$b\_a$：
-{% qnimg ORBIMU-18.png title: ... alt:... %}
-{% qnimg ORBIMU-19.png title: ... alt:... %}
-{% qnimg ORBIMU-20.png title: ... alt:... %}
+![](18.png)
+![](19.png)
+![](20.png)
 
 方程（19）的求解和方程（12）的求解方式类似，是一个$A\_{3(N-2)\times 6} X\_{6 \times 1 } = B\_{3(N-2)\times 1}$的线性系统，需要至少4个连续关键帧，通过SVD求解。
 

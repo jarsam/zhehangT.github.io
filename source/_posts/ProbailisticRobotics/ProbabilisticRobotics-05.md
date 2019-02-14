@@ -26,34 +26,34 @@ description: 《Probabilistic Robotics》第五章论述了对机器人的控制
 在速度动作模型中，用向量$(v\_t, \omega\_t)$来表示动作$u\_t$,其中$v\_t$表示t时刻机器人的速度，$\omega\_t$表示t时刻机器人的转速。
 
 速度动作模型的闭合解算法如下图：
-{% qnimg ProbabilisticRobotics-05-01.png title:速度动作模型的闭合解 alt: ... %}
+![](1.png)
 它的输入是t-1时刻的位姿$x\_{t-1}$，t时刻的动作$u\_t$，以及t时刻的假设位姿$x\_t$。输出假设位姿$x\_t$的概率。$\alpha\_1...\alpha\_6$是与机器人相关的动作误差系数。
 
 $\mathbf{prob(x,b)}$函数计算x在0均值b方差下的概率值。计算方式通常有以下两种方法：
-{% qnimg ProbabilisticRobotics-05-02.png title: ... alt: ... %}
+![](2.png)
 
 
 
 根据粒子滤波，也可以通过从状态转移概率中采样得到当前时刻的位姿$x\_t$，采样是基于$x\_{t-1}$和$u\_t$进行的。基于采样的速度动作模型算法如下图：
-{% qnimg ProbabilisticRobotics-05-03.png title:基于采样的速度动作模型算法 alt: ... %}
+![](3.png)
 算法的输入是$x\_{t-1}$和$u\_t$,输出$x\_t$。$\mathbf {sample}$函数是对控制数据增加噪声扰动。
 
 $\mathbf {sample}$函数通常有以下两种计算方法：
-{% qnimg ProbabilisticRobotics-05-04.png title: ... alt: ... %}
+![](4.png)
 
 以上两种速度动作模型均有严格的数学推导，详见书籍5.3.3小节。
 
 
 # 里程计动作模型
 在里程计模型中，用向量$(\bar x\_{t-1}, \bar x\_t)$来表示$u\_t$,上划线表示该位姿是通过里程计得到的，是基于机器人内部坐标的，并非全局坐标系中的位姿。通过这两个位姿信息可以得到初始旋转角度，平移和最终旋转角度。如图所示：
-{% qnimg ProbabilisticRobotics-05-05.png title: ... alt: ... %}
+![](5.png)
 
 里程计动作模型的闭合解算法如下图：
-{% qnimg ProbabilisticRobotics-05-06.png title:里程计动作模型的闭合解算法 alt: ... %}
+![](6.png)
 它的输入是t-1时刻的位姿$x\_{t-1}$，t时刻的动作$u\_t$，以及t时刻的假设位姿$x\_t$。输出假设位姿$x\_t$的概率。$\alpha\_1...\alpha\_4$是与机器人相关的动作误差系数。
 
 基于采样的里程计动作模型算法如下图：
-{% qnimg ProbabilisticRobotics-05-07.png title:基于采样的里程计模型 alt: ... %}
+![](7.png)
 与基于采样的速度动作模型算法基本类似，区别仅在于动作$u\_t$的表示方式不同。
 
 以上两种里程计动作模型均有严格的数学推导，详见书籍5.4.3小节。
@@ -66,7 +66,7 @@ $\mathbf {sample}$函数通常有以下两种计算方法：
 $p(x\_t \mid u\_t, x\_{t-1}, m) = \eta \ p(x\_t \mid u\_t, x\_{t-1}) \ p(x\_t \mid m)$
 
 融入地图信息的动作模型如图所示：
-{% qnimg ProbabilisticRobotics-05-08.png title:融入地图信息的动作模型 alt: ... %}
+![](8.png)
 在占用地图(occupancy maps)中，如果位置已经被占用，$p(x_t \mid m)=0$
 
 # 总结

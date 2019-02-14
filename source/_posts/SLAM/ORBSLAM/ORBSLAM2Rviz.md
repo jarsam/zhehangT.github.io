@@ -31,7 +31,7 @@ ORB-SLAM的地图和定位可视化是通过Rviz进行展示的，而在ORB-SLAM
 # ORB-SLAM2的坐标系转换
 在对ORB-SLAM2进行实验的过程中，我采用的喜闻乐见的Turtlebot。我们知道ORB-SLAM2的地图构建和定位都是基于自己的map坐标系的，与Turtlebot的坐标系并不产生任何关联。但是我希望将map坐标系融入到Turtlebot的坐标系中，方便之后针对Turtlebot对ORB-SLAM2进行修改和扩展。
 首先简单了解下Turtlebot的坐标系。如下图所示。
-{% qnimg ORBSLAM2Rviz-01.png title: ... alt:... %}
+![](1.png)
 Turtlebot的坐标系遵循**odom --- base_link --- other_link**的标准格式。**other_link**中包含相机的坐标系**camera_rgb_frame**。
 
 因此要将ORB-SLAM2的map坐标系融合到Turtlebot坐标系中，即形成**map --- odom --- base_link --- other_link**的标准格式，需要计算**map --- odom**之间的转换关系。

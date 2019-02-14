@@ -23,7 +23,7 @@ description: 关于《深度学习》第九章卷积神经网络的读书笔记
 **等变表示**(equivariant representations)：令$g$是输入的任意平移函数，那么卷积函数对于g具有等变性。
 
 卷积神经网络的卷积层基本结构如下图所示，大致有三级：
-{% qnimg DeepLearning-09-01.png title: ... alt:... %}
+![](1.png)
 
 在Convolution Stage，并行地进行多个卷积运算来产生一组线性激活函数。
 在Detector Stage，非线性的激活函数如(ReLU)作用在每一个线性输出上。
