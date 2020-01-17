@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="GPS," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="关于学习 Visual Odometry 中如何使用GPS的简单记录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GPS 在 Visual Odometry 中的应用">
+<meta property="og:url" content="https://zhehangt.github.io/2019/12/10/SLAM/GPS/SLAMGPS/index.html">
+<meta property="og:site_name" content="一索哥传奇">
+<meta property="og:description" content="关于学习 Visual Odometry 中如何使用GPS的简单记录">
+<meta property="og:image" content="https://zhehangt.github.io/2019/12/10/SLAM/GPS/SLAMGPS/5.png">
+<meta property="og:image" content="https://zhehangt.github.io/2019/12/10/SLAM/GPS/SLAMGPS/6.png">
+<meta property="og:image" content="https://zhehangt.github.io/2019/12/10/SLAM/GPS/SLAMGPS/7.png">
+<meta property="og:image" content="https://zhehangt.github.io/2019/12/10/SLAM/GPS/SLAMGPS/8.png">
+<meta property="og:image" content="https://zhehangt.github.io/2019/12/10/SLAM/GPS/SLAMGPS/11.png">
+<meta property="og:image" content="https://zhehangt.github.io/2019/12/10/SLAM/GPS/SLAMGPS/9.png">
+<meta property="og:image" content="https://zhehangt.github.io/2019/12/10/SLAM/GPS/SLAMGPS/10.png">
+<meta property="og:image" content="https://zhehangt.github.io/2019/12/10/SLAM/GPS/SLAMGPS/1.png">
+<meta property="og:image" content="https://zhehangt.github.io/2019/12/10/SLAM/GPS/SLAMGPS/2.png">
+<meta property="og:image" content="https://zhehangt.github.io/2019/12/10/SLAM/GPS/SLAMGPS/3.png">
+<meta property="og:image" content="https://zhehangt.github.io/2019/12/10/SLAM/GPS/SLAMGPS/4.png">
+<meta property="og:image" content="https://zhehangt.github.io/2019/12/10/SLAM/GPS/SLAMGPS/12.png">
+<meta property="og:updated_time" content="2019-12-16T03:33:59.513Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="GPS 在 Visual Odometry 中的应用">
+<meta name="twitter:description" content="关于学习 Visual Odometry 中如何使用GPS的简单记录">
+<meta name="twitter:image" content="https://zhehangt.github.io/2019/12/10/SLAM/GPS/SLAMGPS/5.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zhehangt.github.io/2019/12/10/SLAM/GPS/SLAMGPS/"/>
+
+
+
+
+
+  <title>GPS 在 Visual Odometry 中的应用 | 一索哥传奇</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一索哥传奇</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一索哥传奇</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zhehangt.github.io/2019/12/10/SLAM/GPS/SLAMGPS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="一索哥传奇">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一索哥传奇">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">GPS 在 Visual Odometry 中的应用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-10T10:11:25+08:00">
+                2019-12-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SLAM/" itemprop="url" rel="index">
+                    <span itemprop="name">SLAM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/12/10/SLAM/GPS/SLAMGPS/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/12/10/SLAM/GPS/SLAMGPS/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/12/10/SLAM/GPS/SLAMGPS/" class="leancloud_visitors" data-flag-title="GPS 在 Visual Odometry 中的应用">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  关于学习 Visual Odometry 中如何使用GPS的简单记录
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <a id="more"></a>
+<h1 id="&#x6458;&#x8981;"><a href="#&#x6458;&#x8981;" class="headerlink" title="&#x6458;&#x8981;"></a>&#x6458;&#x8981;</h1><p>&#x4E00;&#x4E2A; Visual Odometry &#x5373;&#x4F7F;&#x505A;&#x7684;&#x518D;&#x725B;&#x903C;&#xFF0C;&#x7D2F;&#x79EF;&#x8BEF;&#x5DEE;&#x4F9D;&#x65E7;&#x662F;&#x65E0;&#x6CD5;&#x907F;&#x514D;&#x7684;&#x3002;&#x800C; GPS &#x662F;&#x4E00;&#x79CD;&#x5168;&#x5C40;&#x89C2;&#x6D4B;&#x7684;&#x4F20;&#x611F;&#x5668;&#xFF0C;&#x6BCF;&#x4E00;&#x6B21;&#x89C2;&#x6D4B;&#x90FD;&#x662F;&#x72EC;&#x7ACB;&#x7684;&#xFF0C;&#x56E0;&#x6B64;&#x8BEF;&#x5DEE;&#x5E76;&#x4E0D;&#x4F1A;&#x7D2F;&#x79EF;&#x3002;&#x4ECE;&#x7406;&#x8BBA;&#x4E0A;&#x770B;&#xFF0C;&#x5C06;&#x4E00;&#x4E2A;&#x5C40;&#x90E8;&#x7CBE;&#x5EA6;&#x5F88;&#x9AD8;&#x4F46;&#x5B58;&#x5728;&#x7D2F;&#x79EF;&#x8BEF;&#x5DEE;&#x7684; Visual  Odometry &#x548C; &#x4E00;&#x4E2A;&#x5C40;&#x90E8;&#x7CBE;&#x5EA6;&#x65E0;&#x6CD5;&#x4FDD;&#x8BC1;&#x5230;&#x4E0D;&#x5B58;&#x5728;&#x7D2F;&#x79EF;&#x8BEF;&#x5DEE;&#x7684; GPS &#x76F8;&#x7ED3;&#x5408;&#xFF0C;&#x53EF;&#x4EE5;&#x5F97;&#x5230;&#x4E00;&#x4E2A;&#x5F88;&#x7F8E;&#x79D2;&#x7684;&#x7ED3;&#x679C;&#x3002;&#x5728;&#x8C03;&#x7814;&#x4E86;&#x76F8;&#x5173;&#x7684; paper &#x4E4B;&#x540E;&#xFF0C;GPS &#x548C; Visual Odometry &#x76F8;&#x7ED3;&#x5408;&#x7684;&#x65B9;&#x6CD5;&#x4F9D;&#x65E7;&#x53EF;&#x4EE5;&#x5206;&#x4E3A;&#x6EE4;&#x6CE2;&#x548C;&#x4F18;&#x5316;&#x4E24;&#x79CD;&#x65B9;&#x5F0F;&#x3002;</p>
+<h1 id="&#x6EE4;&#x6CE2;"><a href="#&#x6EE4;&#x6CE2;" class="headerlink" title="&#x6EE4;&#x6CE2;"></a>&#x6EE4;&#x6CE2;</h1><p><a href="https://github.com/ethz-asl/ethzasl_msf" target="_blank" rel="external">A Robust and Modular Multi-Sensor Fusion Approach Applied to MAV Navigation (IROS 2013, ETH)</a><br>ETH 2013&#x5E74;&#x51FA;&#x7684;&#x878D;&#x5408;&#x591A;&#x4F20;&#x611F;&#x5668;&#x7684;&#x677E;&#x8026;&#x5408;&#x6EE4;&#x6CE2;&#x65B9;&#x6CD5;&#xFF0C;&#x4EE3;&#x7801;&#x5F00;&#x6E90;&#xFF0C;&#x5E76;&#x4E14;&#x5DF2;&#x7ECF;&#x96C6;&#x6210;&#x5230; ROS &#x91CC;&#x9762;&#x3002;<br>&#x5176;&#x4E3B;&#x8981;&#x601D;&#x60F3;&#x662F;&#x628A; IMU &#x4F5C;&#x4E3A;&#x4E3B;&#x4F20;&#x611F;&#x5668;&#xFF0C;&#x901A;&#x8FC7;&#x79EF;&#x5206;&#x5F97;&#x5230;6&#x81EA;&#x7531;&#x5EA6;&#x7684;pose&#x3002;VO&#xFF08;VIO&#xFF09;&#x4F5C;&#x4E3A;&#x76F8;&#x5BF9;&#x4F4D;&#x59FF;&#x7684;&#x4F30;&#x8BA1;&#x5668;&#xFF0C;GPS &#x7B49;&#x4F5C;&#x4E3A;&#x5168;&#x5C40;&#x4F4D;&#x59FF;&#x4F30;&#x8BA1;&#x5668;&#xFF0C;&#x4E0E; IMU &#x79EF;&#x5206;&#x5F97;&#x5230;&#x7684;&#x7ED3;&#x679C;&#x8FDB;&#x884C; EKF&#xFF0C;&#x5F97;&#x5230;&#x66F4;&#x52A0;&#x51C6;&#x786E;&#x7684;&#x4F4D;&#x7F6E;&#x4F30;&#x8BA1;&#x3002;IMU &#x79EF;&#x5206;&#x53D7;&#x5230; bias &#x548C;&#x566A;&#x58F0;&#x7684;&#x5370;&#x8C61;&#xFF0C;&#x4F1A;&#x5F88;&#x5FEB;&#x7684;&#x53D1;&#x6563;&#x3002;&#x800C;VO&#x53EF;&#x4EE5;&#x8BA4;&#x4E3A;&#x5728;&#x5C40;&#x90E8;&#x8303;&#x56F4;&#x5185;&#x8BEF;&#x5DEE;&#x5F88;&#x5C0F;&#xFF0C;&#x56E0;&#x6B64;&#x53EF;&#x4EE5;&#x4FEE;&#x6B63; IMU &#x7684; bias&#x3002;&#x800C; GPS &#x4E0D;&#x5B58;&#x5728;&#x7D2F;&#x79EF;&#x8BEF;&#x5DEE;&#x7684;&#x95EE;&#x9898;&#xFF0C;&#x53C8;&#x53EF;&#x4EE5;&#x4FEE;&#x6B63; IMU &#x548C; VO&#xFF08;VIO&#xFF09;&#x7684;&#x7D2F;&#x79EF;&#x8BEF;&#x5DEE;&#x3002;<br>&#x4F5C;&#x4E3A;&#x4E3B;&#x4F20;&#x611F;&#x5668;&#xFF0C;IMU &#x9700;&#x8981;&#x4F30;&#x8BA1;&#x7684;&#x72B6;&#x6001;&#x91CF;&#x5982;&#x4E0B;&#x56FE;&#x6240;&#x793A;&#x3002;&#x5305;&#x62EC;&#x65CB;&#x8F6C;&#xFF0C;&#x901F;&#x5EA6;&#xFF0C;&#x5E73;&#x79FB;&#xFF0C;&#x9640;&#x87BA;&#x4EEA;&#x7684; bias &#x548C;&#x52A0;&#x901F;&#x5EA6;&#x8BA1;&#x7684; bias&#x3002;<br><img src="/2019/12/10/SLAM/GPS/SLAMGPS/5.png" alt=""><br>&#x800C;&#x5F53;&#x8981;&#x878D;&#x5408;&#x5355;&#x76EE;VO&#x65F6;&#xFF0C;&#x7531;&#x4E8E;&#x5355;&#x76EE;VO&#x65E0;&#x6CD5;&#x4F30;&#x8BA1;&#x5C3A;&#x5EA6;&#xFF0C;&#x5E76;&#x4E14;&#x5B58;&#x5728;&#x4E00;&#x5B9A;&#x7684;&#x7D2F;&#x79EF;&#x8BEF;&#x5DEE;&#xFF0C;&#x56E0;&#x6B64;&#x5728;&#x72B6;&#x6001;&#x91CF;&#x4E2D;&#x6DFB;&#x52A0;&#x4E86;&#x5C3A;&#x5EA6;&#x4F30;&#x8BA1;&#xFF0C;&#x5E73;&#x79FB;&#x6F02;&#x79FB;&#x4F30;&#x8BA1;&#xFF0C;&#x65CB;&#x8F6C;&#x6F02;&#x79FB;&#x4F30;&#x8BA1;&#x4EE5;&#x53CA; IMU-Camera &#x7684;&#x65CB;&#x8F6C;&#x5916;&#x53C2;&#x3002;&#x4F5C;&#x8005;&#x8BA4;&#x4E3A; IMU-Camera&#x7684;&#x5E73;&#x79FB;&#x5916;&#x53C2;&#x4E0D;&#x600E;&#x4E48;&#x4F1A;&#x53D8;&#xFF0C;&#x56E0;&#x6B64;&#x5FFD;&#x7565;&#x4E86;&#x8FD9;&#x4E00;&#x9879;&#x3002;<br>&#x6DFB;&#x52A0;&#x7684;&#x72B6;&#x6001;&#x91CF;&#x5982;&#x4E0B;&#x56FE;&#x6240;&#x793A;&#x3002;<br><img src="/2019/12/10/SLAM/GPS/SLAMGPS/6.png" alt=""></p>
+<p>&#x6B64;&#x65F6;&#x53EF;&#x4EE5;&#x5F97;&#x5230;&#x89C2;&#x6D4B;&#x6A21;&#x578B;<br><img src="/2019/12/10/SLAM/GPS/SLAMGPS/7.png" alt=""></p>
+<p>&#x7EBF;&#x6027;&#x5316;&#x4EE5;&#x540E;&#x5F97;&#x5230;&#x7684;&#x89C2;&#x6D4B;&#x65B9;&#x7A0B;&#x4E3A;&#xFF1A;<br><img src="/2019/12/10/SLAM/GPS/SLAMGPS/8.png" alt=""></p>
+<p>&#x81F3;&#x6B64;&#x5C31;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;EKF&#x7684;&#x65B9;&#x5F0F;&#x8FDB;&#x884C;IMU&#x4F20;&#x611F;&#x5668;&#x548C;&#x5355;&#x76EE;VO&#x7684;&#x878D;&#x5408;&#x3002;<br>&#x540C;&#x6837;&#x7684;&#xFF0C;GPS &#x7684;&#x89C2;&#x6D4B;&#x65B9;&#x7A0B;&#x6BD4;&#x8F83;&#x7B80;&#x5355;&#xFF0C;&#x5373;&#x5C06;&#x5F85;&#x4F30;&#x8BA1;&#x7684; pose &#x901A;&#x8FC7;&#x5916;&#x53C2;&#x8F6C;&#x5316;&#x5230; GPS &#x5750;&#x6807;&#x7CFB;&#x7684; pose&#xFF0C;&#x56E0;&#x4E3A; GPS &#x65E0;&#x6CD5;&#x6D4B;&#x91CF;&#x65CB;&#x8F6C;&#xFF0C;&#x6240;&#x4EE5;&#x76F4;&#x63A5;&#x53D6;&#x4E09;&#x7EF4;&#x4F4D;&#x7F6E;&#x7684;&#x5DEE;&#x4F5C;&#x4E3A;&#x89C2;&#x6D4B;&#x8BEF;&#x5DEE;&#x3002;</p>
+<p>&#x7531;&#x4E8E; VO &#x7684;&#x5C3A;&#x5EA6;&#x6F02;&#x79FB;&#x662F;&#x4E0D;&#x7A33;&#x5B9A;&#x7684;&#xFF0C;&#x56E0;&#x6B64;&#x76F4;&#x63A5;&#x628A; VO &#x7684;pose&#x653E;&#x5728;&#x5168;&#x5C40;&#x5750;&#x6807;&#x7CFB;&#x4E0B;&#x5EFA;&#x7ACB;&#x89C2;&#x6D4B;&#x65B9;&#x7A0B;&#x53BB;&#x4F30;&#x8BA1;&#x5C3A;&#x5EA6;&#x662F;&#x4E0D;&#x591F;&#x51C6;&#x786E;&#x7684;&#xFF0C;&#x56E0;&#x6B64;&#x4F5C;&#x8005;&#x63D0;&#x51FA;&#x4E86;&#x628A; VO &#x7684; pose &#x4F5C;&#x4E3A;&#x4E24;&#x5E27;&#x4E4B;&#x95F4;&#x76F8;&#x5BF9;&#x7684; delta pose &#x53BB;&#x5EFA;&#x7ACB;&#x89C2;&#x6D4B;&#x65B9;&#x7A0B;&#x3002;<br>&#x5927;&#x81F4;&#x7684;&#x601D;&#x8DEF;&#x5C31;&#x662F;&#x628A;&#x5E26;&#x4F30;&#x8BA1;&#x7684;&#x72B6;&#x6001;&#x91CF;&#x7684; pose &#x7531;1&#x4E2A;&#x53D8;&#x4E3A;2&#x4E2A;&#xFF0C;&#x7136;&#x540E;&#x57FA;&#x4E8E;&#x8FD9;&#x4E2A;&#x53BB;&#x5EFA;&#x7ACB;&#x534F;&#x9632;&#x5DEE;&#x4F30;&#x8BA1;&#x548C;&#x89C2;&#x6D4B;&#x65B9;&#x7A0B;&#x3002;&#x5982;&#x4E0B;&#x56FE;&#x6240;&#x793A;&#x3002;<br><img src="/2019/12/10/SLAM/GPS/SLAMGPS/11.png" alt=""><br><img src="/2019/12/10/SLAM/GPS/SLAMGPS/9.png" alt=""><br><img src="/2019/12/10/SLAM/GPS/SLAMGPS/10.png" alt=""></p>
+<p>&#x8BBA;&#x6587;&#x4E2D;&#x8FD8;&#x63D0;&#x5230;&#x4E86;&#x4E00;&#x4E9B;&#x7EC6;&#x8282;&#xFF0C;&#x6BD4;&#x5982;&#x5904;&#x7406;&#x4E86;&#x8BF8;&#x5982;&#x65F6;&#x5EF6;&#x9020;&#x6210;&#x7684;&#x66F4;&#x65B0;&#x65B9;&#x7A0B;&#x4F1A;&#x843D;&#x540E;&#x4E8E;&#x9884;&#x6D4B;&#x65B9;&#x7A0B;&#x7684;&#x60C5;&#x51B5;&#xFF0C;&#x5F02;&#x5E38;&#x68C0;&#x6D4B;&#x7B49;&#x3002;&#x6709;&#x5174;&#x8DA3;&#x7684;&#x53EF;&#x4EE5;&#x8BE6;&#x89C1;paper&#x3002;</p>
+<h1 id="&#x4F18;&#x5316;"><a href="#&#x4F18;&#x5316;" class="headerlink" title="&#x4F18;&#x5316;"></a>&#x4F18;&#x5316;</h1><p><a href="https://github.com/HKUST-Aerial-Robotics/VINS-Fusion" target="_blank" rel="external">A General Optimization-based Framework for Global Pose Estimation with Multiple Sensors (HKUST) </a><br>&#x8FD9;&#x7BC7;&#x6587;&#x7AE0;&#x662F;&#x6E2F;&#x79D1;&#x5927;&#x6C88;&#x8001;&#x5E08;&#x7EC4;&#x57FA;&#x4E8E; vins-mono &#x8FDB;&#x884C;&#x7684;&#x62D3;&#x5C55;&#x3002;&#x652F;&#x6301;&#x53CC;&#x76EE;&#x914D;&#x7F6E;&#x3001;&#x591A;&#x8F68;&#x8FF9;&#x878D;&#x5408;&#x4EE5;&#x53CA;GPS&#x7B49;&#x5168;&#x5C40;&#x4F20;&#x611F;&#x5668;&#x4E0E;VO&#x8FDB;&#x884C;&#x8054;&#x5408;&#x4F18;&#x5316;&#x3002;&#x6211;&#x4EEC;&#x7740;&#x91CD;&#x770B;&#x4E00;&#x4E0B; GPS &#x90E8;&#x5206;&#x662F;&#x5982;&#x4F55;&#x4E0E; VO &#x8FDB;&#x884C;&#x8054;&#x5408;&#x4F18;&#x5316;&#x7684;&#x3002;<br>&#x5BF9;&#x4E8E;&#x89C6;&#x89C9;&#x3001;IMU&#x7B49;&#x4F20;&#x611F;&#x5668;&#xFF0C;&#x7531;&#x4E8E;&#x5176;&#x65E0;&#x6CD5;&#x83B7;&#x5F97;&#x5168;&#x5C40;&#x4FE1;&#x606F;&#xFF0C;&#x56E0;&#x6B64;&#x88AB;&#x5B9A;&#x4E49;&#x4E3A; local sensors&#x3002;&#x800C;&#x5BF9;&#x4E8E;GPS&#x3001;&#x78C1;&#x529B;&#x8BA1;&#x7B49;&#x80FD;&#x591F;&#x611F;&#x77E5;&#x5168;&#x5C40;&#x4FE1;&#x606F;&#x7684;&#x4F20;&#x611F;&#x5668;&#xFF0C;&#x88AB;&#x5B9A;&#x4E49;&#x4E3A; global sensors&#x3002;<br>&#x5BF9;&#x4E8E; local sensors&#xFF0C;&#x9996;&#x5148;&#x8FDB;&#x884C;&#x5C40;&#x90E8;&#x4F4D;&#x59FF;&#x4F30;&#x8BA1;&#xFF0C;&#x5373;&#x4F20;&#x7EDF;&#x610F;&#x4E49;&#x4E0A;&#x7684; VO &#x6216;&#x8005; VIO&#x3002;&#x5F97;&#x5230;&#x5C40;&#x90E8;&#x7684;&#x4F4D;&#x59FF;&#x4F30;&#x8BA1;&#x4E4B;&#x540E;&#xFF0C;&#x518D;&#x4E0E; GPS &#x7B49;&#x5168;&#x5C40;&#x4F20;&#x611F;&#x5668;&#x8FDB;&#x884C;&#x5BF9;&#x9F50;&#x3002;&#x5BF9;&#x9F50;&#x7684;&#x65B9;&#x5F0F;&#x662F;&#x5EFA;&#x7ACB;&#x4E00;&#x4E2A; posegraph&#xFF0C; &#x6BCF;&#x4E2A; GPS &#x65F6;&#x523B;&#x5EFA;&#x7ACB;&#x4E00;&#x4E2A;&#x4F4D;&#x59FF; node&#xFF0C; &#x8FDE;&#x7EED;&#x7684;&#x4E24;&#x4E2A; node &#x4E4B;&#x95F4;&#x5C06;&#x5C40;&#x90E8;&#x4F4D;&#x59FF;&#x4F30;&#x8BA1;&#x5F97;&#x5230;&#x7684; delta pose &#x4F5C;&#x4E3A;&#x7EA6;&#x675F;&#x3002;&#x6BCF;&#x4E2A; node &#x8FD8;&#x4E0E; GPS &#x7B49;&#x5168;&#x5C40;&#x4F4D;&#x7F6E;&#x5EFA;&#x7ACB;&#x7EA6;&#x675F;&#x3002;&#x5982;&#x4E0B;&#x56FE;&#x6240;&#x793A;&#x3002;<br><img src="/2019/12/10/SLAM/GPS/SLAMGPS/1.png" alt=""></p>
+<p>GOMSF: Graph-Optimization based Multi-Sensor Fusion for robust UAV pose estimation&#xFF08;ICRA 2018&#xFF0C;ETH&#xFF09;<br>&#x8FD9;&#x7BC7;&#x6587;&#x7AE0;&#x51FA;&#x81EA;ETH&#xFF0C;&#x603B;&#x4F53;&#x601D;&#x60F3;&#x4E0A;&#x4E0E;&#x4E0A;&#x4E00;&#x7BC7;&#x5927;&#x5DEE;&#x4E0D;&#x5DEE;&#xFF0C;&#x4F46;&#x7EC6;&#x8282;&#x4E0A;&#x548C;&#x5B9E;&#x9A8C;&#x4E0A;&#x66F4;&#x52A0;&#x5B8C;&#x5907;&#x4E00;&#x4E9B;&#x3002;&#x5982;&#x4E0B;&#x56FE;&#x6240;&#x793A;&#x3002;<br><img src="/2019/12/10/SLAM/GPS/SLAMGPS/2.png" alt=""><br>&#x4E0A;&#x534A;&#x90E8;&#x5206;&#x7684; pose graph &#x7ED3;&#x6784;&#x5373;&#x4E3A;&#x7B2C;&#x4E00;&#x7BC7;&#x6587;&#x7AE0;&#x7684;&#x7ED3;&#x6784;&#x3002;&#x4F46;&#x662F;&#x4F5C;&#x8005;&#x8BA4;&#x4E3A;&#xFF0C;GPS &#x65E0;&#x6CD5;&#x63D0;&#x4F9B;&#x65CB;&#x8F6C;&#x7684;&#x7EA6;&#x675F;&#xFF0C;&#x56E0;&#x6B64;&#x57FA;&#x4E8E;&#x8FD9;&#x79CD;&#x7ED3;&#x6784;&#x4F18;&#x5316;&#x540E;&#x7684;&#x65CB;&#x8F6C;&#x7684;&#x7CBE;&#x5EA6;&#x4F1A;&#x53D8;&#x5DEE;&#x3002;&#x56E0;&#x6B64;&#x63D0;&#x51FA;&#x4E86;&#x7B2C;&#x4E8C;&#x79CD; pose graph &#x7ED3;&#x6784;&#x3002;<br>&#x5176;&#x4E2D; GPS &#x90E8;&#x5206;&#x7684;&#x7EA6;&#x675F;&#x4FDD;&#x6301;&#x4E0D;&#x53D8;&#x3002;&#x4F46; delta pose &#x53EA;&#x5229;&#x7528; VO(VIO) &#x7684;&#x5E73;&#x79FB;&#x90E8;&#x5206;&#x5EFA;&#x7ACB; node &#x548C; node &#x4E4B;&#x95F4;&#x7684;&#x7EA6;&#x675F;&#x3002;&#x800C;&#x65CB;&#x8F6C;&#x5219;&#x901A;&#x8FC7;&#x5EFA;&#x7ACB;&#x4E00;&#x4E2A;&#x865A;&#x62DF;&#x7684;&#x5C40;&#x90E8;&#x5750;&#x6807;&#x7CFB;&#xFF0C;&#x901A;&#x8FC7;&#x8BA1;&#x7B97;&#x5C40;&#x90E8;&#x5750;&#x6807;&#x7CFB;&#x548C;&#x5168;&#x5C40;&#x5750;&#x6807;&#x7CFB;&#xFF08;GPS&#x5750;&#x6807;&#x7CFB;&#xFF09;&#x4E4B;&#x95F4;&#x7684;&#x53D8;&#x6362; $_GT_L$&#xFF0C;&#x5EFA;&#x5C40;&#x90E8;&#x5750;&#x6807;&#x7CFB;&#x4E0B;&#x7684;&#x65CB;&#x8F6C;&#x8F6C;&#x6362;&#x6210;&#x5168;&#x5C40;&#x5750;&#x6807;&#x7CFB;&#x4E0B;&#x7684;&#x65CB;&#x8F6C;&#xFF0C;&#x7136;&#x540E;&#x5EFA;&#x7ACB;&#x5168;&#x5C40;&#x7684;&#x65CB;&#x8F6C;&#x7EA6;&#x675F;&#x3002;&#x5728;&#x521D;&#x59CB;&#x5316;&#x9636;&#x6BB5;&#xFF0C;&#x901A;&#x8FC7;&#x76F4;&#x63A5;&#x5BF9;&#x9F50; VO(VIO) pose &#x548C; GPS&#xFF0C;&#x89E3;SVD&#x6765;&#x6C42;&#x89E3;$_GT_L$&#x3002;&#x800C;&#x540E;&#x7EED;&#x4F18;&#x5316;&#x8FC7;&#x7A0B;&#x4E2D;&#xFF0C;&#x9996;&#x5148;&#x56FA;&#x5B9A;$_GT_L$&#xFF0C;&#x6ED1;&#x7A97;&#x4F18;&#x5316;&#x5B8C;&#x6210;&#x540E;&#xFF0C;&#x901A;&#x8FC7;&#x5BF9;&#x9F50; VO(VIO) pose&#x548C;&#x4F18;&#x5316;&#x540E;&#x7684;pose&#x5F97;&#x5230;&#x65B0;&#x7684; $_GT_L$&#x3002;&#x7406;&#x8BBA;&#x4E0A;&#x8BB2;&#xFF0C;&#x5F53; VO(VIO) &#x7684;&#x5C40;&#x90E8;&#x8BEF;&#x5DEE;&#x591F;&#x5C0F;&#xFF0C;&#x4E00;&#x5B9A;&#x8303;&#x56F4;&#x5185; $_GT_L$ &#x662F;&#x57FA;&#x672C;&#x4FDD;&#x6301;&#x4E0D;&#x53D8;&#x7684;&#x3002;&#x56E0;&#x6B64;&#x6BCF;&#x4E2A; VO(VIO) &#x65F6;&#x523B;&#x7684;&#x5C40;&#x90E8; pose&#xFF0C;&#x90FD;&#x53EF;&#x4EE5;&#x901A;&#x8FC7; $_GT_L$ &#x53D8;&#x6210;&#x5168;&#x5C40; pose&#x3002;</p>
+<p>&#x8FD9;&#x7BC7;&#x6587;&#x7AE0;&#x7684;&#x5B9E;&#x9A8C;&#x90E8;&#x5206;&#x7279;&#x610F;&#x8BC1;&#x660E;&#x4E86;&#x81EA;&#x5DF1;&#x7684;&#x65B9;&#x6CD5;&#x8981;&#x7531;&#x4E8E;&#x6EE4;&#x6CE2;&#x65B9;&#x6CD5;&#x548C;&#x7B2C;&#x4E00;&#x7BC7;&#x6587;&#x7AE0;&#x7684;&#x65B9;&#x6CD5;&#x3002;&#x5BF9;&#x6BD4;&#x5B9E;&#x9A8C;&#x5982;&#x4E0B;&#xFF1A;<br><img src="/2019/12/10/SLAM/GPS/SLAMGPS/3.png" alt=""></p>
+<p>&#x800C;&#x901A;&#x8FC7;&#x5168;&#x5C40;&#x7EA6;&#x675F;&#x7684;&#x65B9;&#x6CD5;&#xFF0C;&#x4E5F;&#x63D0;&#x5347;&#x4E86;&#x65CB;&#x8F6C;&#x7684;&#x7CBE;&#x5EA6;&#x3002;&#x5982;&#x4E0B;&#x56FE;&#x6240;&#x793A;&#x3002;<br><img src="/2019/12/10/SLAM/GPS/SLAMGPS/4.png" alt=""></p>
+<p>&#x8FD8;&#x6709;&#x4E00;&#x4E2A;&#x7EC6;&#x8282;&#x5C31;&#x662F;&#xFF0C;&#x5728;&#x8FDB;&#x884C;&#x4F18;&#x5316;&#x4E4B;&#x524D;&#xFF0C;&#x4F5C;&#x8005;&#x4F1A;&#x628A; VO(VIO) &#x51FA;&#x7684; pose &#x4E0E; IMU &#x8FDB;&#x884C;&#x4E00;&#x6B21;&#x677E;&#x8026;&#x5408;&#x7684;&#x6EE4;&#x6CE2;&#x3002;&#x5C3D;&#x91CF;&#x51CF;&#x5C11;&#x4E0E; GPS &#x4E4B;&#x95F4;&#x7684;&#x65F6;&#x5EF6;&#x5E26;&#x6765;&#x7684;&#x8BEF;&#x5DEE;&#x3002;<br><img src="/2019/12/10/SLAM/GPS/SLAMGPS/12.png" alt=""></p>
+<h1 id="&#x5C0F;&#x7ED3;"><a href="#&#x5C0F;&#x7ED3;" class="headerlink" title="&#x5C0F;&#x7ED3;"></a>&#x5C0F;&#x7ED3;</h1><p>&#x603B;&#x4F53;&#x6765;&#x8BF4;&#xFF0C;&#x878D;&#x5408; GPS &#x7684;&#x65B9;&#x6CD5;&#x5E76;&#x6CA1;&#x6709;&#x4EC0;&#x4E48;&#x7279;&#x522B;&#x4EE4;&#x4EBA;&#x7ECF;&#x9A8C;&#x7684;&#x5730;&#x65B9;&#xFF0C;&#x91CC;&#x9762;&#x4E5F;&#x6709;&#x5F88;&#x591A;&#x7EC6;&#x8282;&#x503C;&#x5F97;&#x601D;&#x8003;&#x3002;&#x6700;&#x76F4;&#x63A5;&#x7684;&#x95EE;&#x9898;&#x5C31;&#x662F;&#x5982;&#x4F55;&#x4F30;&#x8BA1;&#x4E00;&#x4E2A;&#x6BD4;&#x8F83;&#x597D;&#x7684;&#x65B9;&#x5DEE;&#xFF0C;&#x65E0;&#x8BBA;&#x662F;&#x89C6;&#x89C9;&#x65B9;&#x5DEE;&#x8FD8;&#x662F; GPS &#x65B9;&#x5DEE;&#x3002;&#x6BD4;&#x5982; GPS &#x65B9;&#x5DEE;&#xFF0C;&#x5982;&#x679C; GPS &#x7684;&#x4F4D;&#x7F6E;&#x6BD4;&#x8F83;&#x626F;&#x6DE1;&#xFF0C;&#x4F46;&#x81EA;&#x5DF1;&#x53C8;&#x8BA4;&#x4E3A;&#x81EA;&#x5DF1;&#x7684;&#x65B9;&#x5DEE;&#x5F88;&#x5C0F;&#xFF0C;&#x90A3;&#x4E48;&#x5F88;&#x6709;&#x53EF;&#x80FD;&#x628A;&#x6574;&#x4F53;&#x7684; pose &#x62C9;&#x6B6A;&#x3002;VINS-Fusion&#x76F4;&#x63A5;&#x91C7;&#x7528;&#x4E86; GPS &#x7684;&#x661F;&#x6570;&#x4F5C;&#x4E3A;&#x65B9;&#x5DEE;&#x4F30;&#x8BA1;&#x7684;&#x6807;&#x51C6;&#xFF0C;&#x5373;&#x661F;&#x6570;&#x8D8A;&#x591A;&#x65B9;&#x5DEE;&#x8D8A;&#x5C0F;&#x3002;<br>&#x5B9E;&#x9645;&#x5E94;&#x7528;&#x8FC7;&#x7A0B;&#x4E2D;&#x5E94;&#x8BE5;&#x8FD8;&#x6709;&#x5F88;&#x591A;&#x5751;&#x8981;&#x91C7;&#x3002;&#x5F85;&#x5B9E;&#x64CD;&#x540E;&#x5728;&#x66F4;&#x65B0;&#x3002;</p>
+<h1 id="&#x6587;&#x732E;"><a href="#&#x6587;&#x732E;" class="headerlink" title="&#x6587;&#x732E;"></a>&#x6587;&#x732E;</h1><p>[1] Lynen S, Achtelik M W, Weiss S, et al. A robust and modular multi-sensor fusion approach applied to mav navigation[C]//2013 IEEE/RSJ international conference on intelligent robots and systems. IEEE, 2013: 3923-3929.<br>[2] Weiss S M. Vision based navigation for micro helicopters[D]. ETH Zurich, 2012.<br>[3] Qin T, Cao S, Pan J, et al. A General Optimization-based Framework for Global Pose Estimation with Multiple Sensors[J]. arXiv preprint arXiv:1901.03642, 2019.<br>[4] Mascaro R, Teixeira L, Hinzmann T, et al. GOMSF: Graph-Optimization based Multi-Sensor Fusion for robust UAV pose estimation[C]//2018 IEEE International Conference on Robotics and Automation (ICRA). IEEE, 2018: 1421-1428.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/GPS/" rel="tag"># GPS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/23/SLAM/Basic/VIOInit/" rel="next" title="VIO初始化相关Paper简单梳理">
+                <i class="fa fa-chevron-left"></i> VIO初始化相关Paper简单梳理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="一索哥传奇" />
+            
+              <p class="site-author-name" itemprop="name">一索哥传奇</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zhehangT" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/zhehangt" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-bell"></i>知乎</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#摘要"><span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#滤波"><span class="nav-text">滤波</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优化"><span class="nav-text">优化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#小结"><span class="nav-text">小结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#文献"><span class="nav-text">文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">一索哥传奇</span>
+
+  
+
+  <span class="post-meta-divider">|</span>
+
+  <!--以下3行为一条竖线和Coding Page-->
+  <div class="powered-by">  
+  </div>
+  <span>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'vnQ4VyLcQhpvNz1HMRY2rEMS-gzGzoHsz',
+        appKey: 'pgWRIt4VTSSNz6dQ94VbkU3J',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('-1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("vnQ4VyLcQhpvNz1HMRY2rEMS-gzGzoHsz", "pgWRIt4VTSSNz6dQ94VbkU3J");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

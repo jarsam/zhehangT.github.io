@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="源码学习,VINS-Mono," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="VINS-Mono中的Feature Tracker相关代码学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VINS-Mono中的Feature Tracker">
+<meta property="og:url" content="https://zhehangt.github.io/2018/04/18/SLAM/VINS/VINSFeatureTracker/index.html">
+<meta property="og:site_name" content="一索哥传奇">
+<meta property="og:description" content="VINS-Mono中的Feature Tracker相关代码学习">
+<meta property="og:updated_time" content="2018-09-01T03:49:02.352Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VINS-Mono中的Feature Tracker">
+<meta name="twitter:description" content="VINS-Mono中的Feature Tracker相关代码学习">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zhehangt.github.io/2018/04/18/SLAM/VINS/VINSFeatureTracker/"/>
+
+
+
+
+
+  <title>VINS-Mono中的Feature Tracker | 一索哥传奇</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一索哥传奇</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一索哥传奇</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zhehangt.github.io/2018/04/18/SLAM/VINS/VINSFeatureTracker/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="一索哥传奇">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一索哥传奇">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">VINS-Mono中的Feature Tracker</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-18T10:11:25+08:00">
+                2018-04-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器人事业/" itemprop="url" rel="index">
+                    <span itemprop="name">机器人事业</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器人事业/SLAM/" itemprop="url" rel="index">
+                    <span itemprop="name">SLAM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/04/18/SLAM/VINS/VINSFeatureTracker/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/04/18/SLAM/VINS/VINSFeatureTracker/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/04/18/SLAM/VINS/VINSFeatureTracker/" class="leancloud_visitors" data-flag-title="VINS-Mono中的Feature Tracker">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  VINS-Mono中的Feature Tracker相关代码学习
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <a id="more"></a>
+<h1 id="&#x6458;&#x8981;"><a href="#&#x6458;&#x8981;" class="headerlink" title="&#x6458;&#x8981;"></a>&#x6458;&#x8981;</h1><p>VINS-Mono&#x4E2D;&#x91C7;&#x7528;&#x5149;&#x6D41;&#x6CD5;&#x4F5C;&#x4E3A;&#x89C6;&#x89C9;&#x524D;&#x7AEF;&#xFF0C;&#x4ECE;&#x5B9E;&#x9A8C;&#x6548;&#x679C;&#x4E0A;&#x6765;&#x770B;&#xFF0C;&#x8FFD;&#x8E2A;&#x7684;&#x6210;&#x529F;&#x7387;&#x975E;&#x5E38;&#x7684;&#x9AD8;&#xFF0C;&#x867D;&#x7136;&#x727A;&#x7272;&#x4E86;&#x4E00;&#x5B9A;&#x7684;&#x7CBE;&#x786E;&#x5EA6;&#xFF0C;&#x4F46;&#x4E0D;&#x4F1A;&#x50CF;ORB-SLAM&#x90A3;&#x6837;&#x5BB9;&#x6613;&#x4E22;&#x5931;&#x3002;&#x672C;&#x7BC7;&#x535A;&#x5BA2;&#x5C06;&#x5BF9;VINS-Mono&#x7684;&#x524D;&#x7AEF;&#x4EE3;&#x7801;&#x505A;&#x7B80;&#x5355;&#x7684;&#x68B3;&#x7406;&#x3002;</p>
+<h1 id="&#x6570;&#x636E;&#x7ED3;&#x6784;"><a href="#&#x6570;&#x636E;&#x7ED3;&#x6784;" class="headerlink" title="&#x6570;&#x636E;&#x7ED3;&#x6784;"></a>&#x6570;&#x636E;&#x7ED3;&#x6784;</h1><p>VINS-Mono&#x4EE5; ROS &#x4F5C;&#x4E3A;&#x4EE3;&#x7801;&#x5F00;&#x53D1;&#x7684;&#x57FA;&#x7840;&#xFF0C;&#x4E0E;&#x524D;&#x7AEF;&#x76F8;&#x5173;&#x7684;&#x4EE3;&#x7801;&#x90FD;&#x5728;feature_tracker&#x76EE;&#x5F55;&#x4E0B;&#x3002;&#x6700;&#x4E3B;&#x8981;&#x7684;&#x6D41;&#x7A0B;&#x5C31;&#x662F;&#x901A;&#x8FC7;&#x8BA2;&#x9605;&#x56FE;&#x50CF;&#x7684;Topic&#xFF0C;&#x83B7;&#x53D6;&#x56FE;&#x50CF;&#x540E;&#x8FDB;&#x884C;&#x5904;&#x7406;&#x3002;&#x5904;&#x7406;&#x5F97;&#x5230;&#x4E86;&#x56FE;&#x50CF;&#x4E0E;&#x56FE;&#x50CF;&#x4E4B;&#x95F4;&#x7684;&#x5339;&#x914D;&#x5173;&#x7CFB;&#xFF0C;&#x7136;&#x540E;&#x901A;&#x8FC7;&#x6D88;&#x606F;&#x53D1;&#x5E03;&#x3002;&#x8FD9;&#x91CC;&#x6D89;&#x53CA;&#x5230;&#x4E00;&#x4E2A;&#x5F88;&#x91CD;&#x8981;&#x7684;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x5C31;&#x662F;<code>sensor_msgs::PointCloud</code>&#x3002;&#x5176;&#x5B9A;&#x4E49;&#x5982;&#x4E0B;&#xFF1A;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">std_msgs/Header header</div><div class="line">geometry_msgs/Point32[] points</div><div class="line">sensor_msgs/ChannelFloat32[] channels</div></pre></td></tr></table></figure></p>
+<p>&#x5728;points&#x4E2D;&#x5B58;&#x50A8;&#x4E86;&#x6240;&#x6709;&#x5F53;&#x524D;&#x56FE;&#x50CF;&#x4E2D;&#x8FFD;&#x8E2A;&#x5230;&#x7684;&#x89D2;&#x70B9;&#x7684;&#x56FE;&#x50CF;&#x5F52;&#x4E00;&#x5316;&#x5750;&#x6807;&#x3002;<br>&#x5728;channels&#x4E2D;&#x5B58;&#x50A8;&#x4E86;&#x5173;&#x4E8E;&#x8BE5;&#x89D2;&#x70B9;&#x7684;&#x76F8;&#x5173;&#x4FE1;&#x606F;&#xFF0C;&#x8FD9;&#x91CC;&#x5171;&#x5B58;&#x50A8;&#x4E86;5&#x79CD;&#x4FE1;&#x606F;&#x3002;<br>1.&#x89D2;&#x70B9;&#x7684;id<br>2.&#x89D2;&#x70B9;&#x50CF;&#x7D20;&#x5750;&#x6807;&#x7684;&#x6A2A;&#x5750;&#x6807;<br>3.&#x89D2;&#x70B9;&#x50CF;&#x7D20;&#x5750;&#x6807;&#x7684;&#x7EB5;&#x5750;&#x6807;<br>4.&#x89D2;&#x70B9;&#x5728;x&#x65B9;&#x5411;&#x7684;&#x901F;&#x5EA6;<br>5.&#x89D2;&#x70B9;&#x5728;y&#x65B9;&#x5411;&#x7684;&#x901F;&#x5EA6;<br><code>sensor_msgs::PointCloud</code>&#x4E2D;&#x6240;&#x6709;&#x7684;&#x4FE1;&#x606F;&#x90FD;&#x662F;&#x5728;<code>void img_callback(const sensor_msgs::ImageConstPtr &amp;img_msg)</code>&#x4E2D;&#x5904;&#x7406;&#x5F97;&#x5230;&#x7684;&#xFF0C;&#x5B9E;&#x9645;&#x4F9D;&#x8D56;&#x7684;&#x662F;<code>FeatureTracker</code>&#x7C7B;&#xFF0C;&#x5904;&#x7406;&#x56FE;&#x50CF;&#x7684;&#x5165;&#x53E3;&#x662F;<code>void FeatureTracker::readImage(const cv::Mat &amp;_img, double _cur_time)</code>&#x3002;<code>FeatureTracker</code>&#x7C7B;&#x4E2D;&#x51E0;&#x4E2A;&#x6BD4;&#x8F83;&#x91CD;&#x8981;&#x7684;&#x6570;&#x636E;&#x7ED3;&#x6784;&#xFF0C;&#x5982;&#x4E0B;&#xFF1A;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">camodocal::CameraPtr m_camera; //&#x76F8;&#x673A;&#x6A21;&#x578B;&#xFF0C;&#x4FDD;&#x5B58;&#x4E86;&#x76F8;&#x673A;&#x7684;&#x5185;&#x53C2;&#x548C;&#x76F8;&#x673A;&#x6295;&#x5F71;&#x65B9;&#x7A0B;</div><div class="line"></div><div class="line">cv::Mat prev_img, cur_img, forw_img; //&#x539F;&#x59CB;&#x56FE;&#x50CF;&#x6570;&#x636E;&#x3002;prev_img&#x597D;&#x50CF;&#x6CA1;&#x5565;&#x7528;&#xFF0C;cur_img&#x4FDD;&#x5B58;&#x4E86;&#x4E0A;&#x4E00;&#x5E27;&#x56FE;&#x50CF;&#xFF0C;forw_img&#x4FDD;&#x5B58;&#x4E86;&#x5F53;&#x524D;&#x5E27;&#x3002;</div><div class="line">vector&lt;cv::Point2f&gt; prev_pts, cur_pts, forw_pts; //&#x56FE;&#x50CF;&#x4E2D;&#x7684;&#x89D2;&#x70B9;&#x5750;&#x6807;</div><div class="line">vector&lt;int&gt; track_cnt; //&#x4FDD;&#x5B58;&#x4E86;&#x5F53;&#x524D;&#x8FFD;&#x8E2A;&#x5230;&#x7684;&#x89D2;&#x70B9;&#x4E00;&#x5171;&#x88AB;&#x591A;&#x5C11;&#x5E27;&#x56FE;&#x50CF;&#x8FFD;&#x8E2A;&#x5230;</div><div class="line">vector&lt;int&gt; ids; //&#x4FDD;&#x5B58;&#x4E86;&#x5F53;&#x524D;&#x8FFD;&#x8E2A;&#x5230;&#x7684;&#x89D2;&#x70B9;&#x7684;ID&#xFF0C;&#x8FD9;&#x4E2A;ID&#x975E;&#x5E38;&#x5173;&#x952E;&#xFF0C;&#x4FDD;&#x5B58;&#x4E86;&#x5E27;&#x4E0E;&#x5E27;&#x4E4B;&#x95F4;&#x89D2;&#x70B9;&#x7684;&#x5339;&#x914D;&#x5173;&#x7CFB;&#x3002;</div></pre></td></tr></table></figure></p>
+<h1 id="&#x5904;&#x7406;&#x6D41;&#x7A0B;"><a href="#&#x5904;&#x7406;&#x6D41;&#x7A0B;" class="headerlink" title="&#x5904;&#x7406;&#x6D41;&#x7A0B;"></a>&#x5904;&#x7406;&#x6D41;&#x7A0B;</h1><p>&#x6574;&#x4E2A;&#x89C6;&#x89C9;&#x524D;&#x7AEF;&#x6700;&#x5173;&#x952E;&#x7684;&#x4EE3;&#x7801;&#x5C31;&#x5728;<code>void FeatureTracker::readImage(const cv::Mat &amp;_img, double _cur_time)</code>&#x4E2D;&#x3002;<br>&#x4E0A;&#x4E00;&#x5E27;&#x7684;&#x56FE;&#x50CF;&#x548C;&#x56FE;&#x50CF;&#x4E2D;&#x7684;&#x89D2;&#x70B9;&#x5206;&#x522B;&#x4FDD;&#x5B58;&#x5728;<code>cur_img</code>&#x548C;<code>cur_pts</code>&#x4E2D;&#xFF0C;&#x5229;&#x7528;<code>cv::calcOpticalFlowPyrLK(cur_img, forw_img, cur_pts, forw_pts, status, err, cv::Size(21, 21), 3);</code>&#x51FD;&#x6570;&#x53EF;&#x4EE5;&#x5F97;&#x5230;&#x5F53;&#x524D;&#x56FE;&#x50CF;&#x4E2D;&#x80FD;&#x901A;&#x8FC7;&#x5149;&#x6D41;&#x8FFD;&#x8E2A;&#x5230;&#x7684;&#x89D2;&#x70B9;&#x7684;&#x5750;&#x6807;&#xFF0C;&#x4FDD;&#x5B58;&#x5728;<code>forw_pts</code>&#x4E2D;&#x3002;<br>&#x7531;&#x4E8E;&#x524D;&#x4E00;&#x5E27;&#x4FDD;&#x5B58;&#x7684;&#x89D2;&#x70B9;&#x5E76;&#x4E0D;&#x4E00;&#x5B9A;&#x5168;&#x90E8;&#x80FD;&#x591F;&#x88AB;&#x5F53;&#x524D;&#x5E27;&#x8FFD;&#x8E2A;&#x5230;&#xFF0C;&#x8FFD;&#x8E2A;&#x7684;&#x6210;&#x529F;&#x4E0E;&#x5426;&#x4FDD;&#x5B58;&#x5728;<code>status</code>&#x4E2D;&#x3002;&#x56E0;&#x6B64;&#x5229;&#x7528;<code>status</code>&#x548C;<code>void reduceVector(vector&lt;cv::Point2f&gt; &amp;v, vector&lt;uchar&gt; status)</code>&#x51FD;&#x6570;&#x5BF9;<code>track_cnt&#xFF0C;ids</code>&#x7B49;&#x8FDB;&#x884C;&#x66F4;&#x65B0;&#x3002;<br>&#x7ECF;&#x8FC7;&#x66F4;&#x65B0;&#x4E4B;&#x540E;<code>track_cnt</code>&#x91CC;&#x9762;&#x4FDD;&#x5B58;&#x90FD;&#x662F;&#x80FD;&#x591F;&#x8FFD;&#x8E2A;&#x5230;&#x7684;&#x89D2;&#x70B9;&#x7684;&#x8FFD;&#x8E2A;&#x6B21;&#x6570;&#xFF0C;&#x6267;&#x884C;+1&#x64CD;&#x4F5C;&#x3002;</p>
+<p>&#x7531;&#x4E8E;&#x5149;&#x6D41;&#x5339;&#x914D;&#x4F1A;&#x5BFC;&#x81F4;&#x8FFD;&#x8E2A;&#x5230;&#x7684;&#x89D2;&#x70B9;&#x8D8A;&#x6765;&#x4E0E;&#x5C11;&#xFF0C;&#x56E0;&#x6B64;&#x9700;&#x8981;&#x6839;&#x636E;<code>MAX_CNT</code>&#x548C;&#x5728;&#x5F53;&#x524D;&#x5E27;&#x4E2D;&#x8FFD;&#x8E2A;&#x5230;&#x7684;&#x89D2;&#x70B9;&#x6570;&#x76EE;&#x5DEE;&#xFF0C;&#x8FDB;&#x884C;&#x65B0;&#x7684;&#x89D2;&#x70B9;&#x7684;&#x63D0;&#x53D6;&#x3002;&#x4F9D;&#x8D56;&#x7684;&#x51FD;&#x6570;&#x4E3A;<code>cv::goodFeaturesToTrack(forw_img, n_pts, MAX_CNT - forw_pts.size(), 0.01, MIN_DIST, mask);</code>&#x65B0;&#x63D0;&#x53D6;&#x7684;&#x89D2;&#x70B9;&#x5750;&#x6807;&#x4FDD;&#x5B58;&#x5728;<code>n_pts</code>&#x4E2D;&#x3002;&#x503C;&#x5F97;&#x6CE8;&#x610F;&#x7684;&#x662F;&#x8FD9;&#x91CC;&#x6709;&#x4E2A;&#x53C2;&#x6570;<code>MIN_DIST</code>&#xFF0C;&#x8FD9;&#x4E2A;&#x53C2;&#x6570;&#x4FDD;&#x8BC1;2&#x4E2A;&#x76F8;&#x90BB;&#x89D2;&#x70B9;&#x4E4B;&#x95F4;&#x7684;&#x6700;&#x5C0F;&#x8DDD;&#x79BB;&#xFF0C;&#x901A;&#x8FC7;&#x8FD9;&#x4E2A;&#x53C2;&#x6570;&#x53EF;&#x4EE5;&#x5728;&#x4E00;&#x5B9A;&#x7A0B;&#x5EA6;&#x4E0A;&#x4FDD;&#x8BC1;&#x89D2;&#x70B9;&#x7684;&#x5747;&#x5300;&#x5206;&#x5E03;&#x3002;<br>&#x8FD9;&#x91CC;<code>mask</code>&#x7684;&#x8BBE;&#x7F6E;&#x4E5F;&#x662F;&#x6709;&#x8BB2;&#x7A76;&#x7684;&#xFF0C;&#x56E0;&#x4E3A;&#x5728;<code>forw_img</code>&#x4E2D;&#x5DF2;&#x7ECF;&#x901A;&#x8FC7;&#x5149;&#x6D41;&#x8FFD;&#x8E2A;&#x5230;&#x4E86;&#x4E00;&#x90E8;&#x5206;&#x89D2;&#x70B9;&#xFF0C;&#x5F53;&#x518D;&#x6B21;&#x4ECE;<code>forw_img</code>&#x4E2D;&#x63D0;&#x53D6;&#x89D2;&#x70B9;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x901A;&#x8FC7;&#x8BBE;&#x7F6E;&#x76F8;&#x5E94;&#x7684;<code>mask</code>,&#x6765;&#x4FDD;&#x8BC1;&#x89D2;&#x70B9;&#x7684;&#x63D0;&#x53D6;&#x4E0D;&#x4F1A;&#x91CD;&#x590D;&#x3002;&#x8BBE;&#x7F6E;<code>mask</code>&#x662F;&#x901A;&#x8FC7;<code>void FeatureTracker::setMask()</code>&#x5B9E;&#x73B0;&#x7684;&#x3002;<code>void FeatureTracker::setMask()</code>&#x91CC;&#x9762;&#x6709;&#x4E2A;&#x5F88;&#x6709;&#x8DA3;&#x7684;&#x64CD;&#x4F5C;&#x5C31;&#x662F;&#x4F1A;&#x6839;&#x636E;&#x89D2;&#x70B9;&#x88AB;&#x8FFD;&#x8E2A;&#x7684;&#x6B21;&#x6570;&#x8FDB;&#x884C;&#x6392;&#x5E8F;&#xFF0C;&#x5373;<code>track_cnt, ids, forw_pts</code>&#x90FD;&#x662F;&#x6309;&#x7167;&#x89D2;&#x70B9;&#x88AB;&#x8FFD;&#x8E2A;&#x7684;&#x6B21;&#x6570;&#x6392;&#x5E8F;&#x7684;&#x3002;<br>&#x4E4B;&#x540E;&#x4F1A;&#x628A;&#x65B0;&#x8FFD;&#x8E2A;&#x5230;&#x7684;&#x89D2;&#x70B9;<code>n_pts</code>&#x52A0;&#x5165;&#x5230;<code>forw_pts</code>&#x548C;<code>ids</code>&#x4E2D;&#x53BB;&#x3002;<br>&#x6700;&#x540E;&#x8C03;&#x7528;<code>void FeatureTracker::undistortedPoints()</code>&#x5BF9;&#x89D2;&#x70B9;&#x56FE;&#x50CF;&#x5750;&#x6807;&#x505A;&#x53BB;&#x7578;&#x53D8;&#x5904;&#x7406;&#xFF0C;&#x5E76;&#x8BA1;&#x7B97;&#x6BCF;&#x4E2A;&#x89D2;&#x70B9;&#x7684;&#x901F;&#x5EA6;&#x3002;</p>
+<p>&#x81F3;&#x6B64;&#xFF0C;&#x6240;&#x6709;<code>sensor_msgs::PointCloud</code>&#x91CC;&#x9762;&#x7684;&#x6570;&#x636E;&#x90FD;&#x5DF2;&#x7ECF;&#x8BA1;&#x7B97;&#x5F97;&#x5230;&#x4E86;&#x3002;</p>
+<h1 id="&#x5C0F;&#x7ED3;"><a href="#&#x5C0F;&#x7ED3;" class="headerlink" title="&#x5C0F;&#x7ED3;"></a>&#x5C0F;&#x7ED3;</h1><p>Feature Tracker&#x5176;&#x5B9E;&#x4EC5;&#x4EC5;&#x505A;&#x4E86;&#x89C6;&#x89C9;&#x524D;&#x7AEF;&#x7684;&#x6570;&#x636E;&#x5173;&#x8054;&#xFF0C;&#x53EA;&#x662F;&#x89C6;&#x89C9;&#x524D;&#x7AEF;&#x7684;&#x7B2C;&#x4E00;&#x6B65;&#x3002;&#x4E0E;ORB&#x901A;&#x8FC7;&#x63CF;&#x8FF0;&#x5B50;&#x8FDB;&#x884C;&#x5173;&#x8054;&#x5339;&#x914D;&#x4E0D;&#x540C;&#x7684;&#x662F;&#xFF0C;VINS&#x91C7;&#x7528;&#x4E86;KLT&#x5149;&#x6D41;&#x7684;&#x65B9;&#x5F0F;&#x5BF9;&#x89D2;&#x70B9;&#x8FDB;&#x884C;&#x5173;&#x8054;&#x5339;&#x914D;&#xFF0C;&#x5E76;&#x901A;&#x8FC7;id&#x7684;&#x65B9;&#x5F0F;&#x8BB0;&#x5F55;&#x5173;&#x8054;&#x7684;&#x7ED3;&#x679C;&#x3002;&#x603B;&#x7684;&#x6765;&#x8BF4;&#xFF0C;&#x901F;&#x5EA6;&#x5FEB;&#xFF0C;&#x6297;&#x5E72;&#x6270;&#x5F3A;&#xFF0C;&#x4F46;&#x727A;&#x7272;&#x4E86;&#x4E00;&#x5B9A;&#x7684;&#x7CBE;&#x786E;&#x5EA6;&#x3002;</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/源码学习/" rel="tag"># 源码学习</a>
+          
+            <a href="/tags/VINS-Mono/" rel="tag"># VINS-Mono</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/11/SLAM/ORBSLAM/ORBSLAM2LoopClosing/" rel="next" title="ORB_SLAM2中的回环检测">
+                <i class="fa fa-chevron-left"></i> ORB_SLAM2中的回环检测
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/19/SLAM/VINS/VINSInitialiaztion/" rel="prev" title="VINS-Mono中的VIO初始化">
+                VINS-Mono中的VIO初始化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="一索哥传奇" />
+            
+              <p class="site-author-name" itemprop="name">一索哥传奇</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">50</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zhehangT" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/zhehangt" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-bell"></i>知乎</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#摘要"><span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据结构"><span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#处理流程"><span class="nav-text">处理流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#小结"><span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">一索哥传奇</span>
+
+  
+
+  <span class="post-meta-divider">|</span>
+
+  <!--以下3行为一条竖线和Coding Page-->
+  <div class="powered-by">  
+  </div>
+  <span>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a></div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'vnQ4VyLcQhpvNz1HMRY2rEMS-gzGzoHsz',
+        appKey: 'pgWRIt4VTSSNz6dQ94VbkU3J',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('-1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("vnQ4VyLcQhpvNz1HMRY2rEMS-gzGzoHsz", "pgWRIt4VTSSNz6dQ94VbkU3J");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
