@@ -39,32 +39,6 @@
     </entry>
     
     <entry>
-      <title><![CDATA[VIO标定相关Paper简单梳理]]></title>
-      <url>https://zhehangt.github.io/2019/03/23/SLAM/Basic/VIOCalibration/</url>
-      <content type="html"><![CDATA[<a id="more"></a>
-<p>1.Continuous-Time Batch Estimation using Temporal Basis Functions &#xFF08;ICRA 2012&#xFF09;<br>&#x5927;&#x81F4;&#x601D;&#x8DEF;&#xFF1A;IMU&#x9891;&#x7387;&#x5F88;&#x9AD8;&#xFF0C;&#x5982;&#x679C;&#x5EFA;&#x7ACB;&#x6240;&#x6709;IMU&#x65F6;&#x523B;&#x548C;&#x56FE;&#x50CF;&#x65F6;&#x523B;&#x7684;&#x72B6;&#x6001;&#x91CF;&#xFF08;6 pose&#x3001;6 bias&#xFF09;&#xFF0C;&#x53C2;&#x6570;&#x89C4;&#x6A21;&#x4F1A;&#x5F88;&#x5927;&#x3002;&#x56E0;&#x6B64;&#x7528;&#x5927;&#x6982;200-300&#x4E2A;knots&#x7684;&#x6837;&#x6761;&#x66F2;&#x7EBF;&#x6765;&#x4EE3;&#x8868;IMU&#x65F6;&#x523B;&#x548C;&#x56FE;&#x50CF;&#x65F6;&#x523B;&#x7684;&#x72B6;&#x6001;&#x91CF;&#xFF0C;&#x6B64;&#x65F6;&#x53EF;&#x4EE5;&#x6781;&#x5927;&#x964D;&#x4F4E;&#x72B6;&#x6001;&#x91CF;&#x89C4;&#x6A21;&#x3002;&#x89C2;&#x6D4B;&#x6709;&#x89C6;&#x89C9;&#x7279;&#x5F81;&#x70B9;&#x4EE5;&#x53CA;IMU&#x7684;&#x52A0;&#x901F;&#x5EA6;&#x548C;&#x89D2;&#x901F;&#x5EA6;&#x3002;&#x5BF9;&#x4E8E;&#x6BCF;&#x4E2A;&#x56FE;&#x50CF;&#x65F6;&#x523B;&#x5EFA;&#x7ACB;&#x89C6;&#x89C9;&#x89C2;&#x6D4B;&#x6B8B;&#x5DEE;&#x9879;&#xFF0C;&#x5BF9;&#x4E8E;&#x6BCF;&#x4E2A;IMU&#x65F6;&#x523B;&#x5C06;6 pose&#x5FAE;&#x5206;&#x5F97;&#x5230;&#x89D2;&#x901F;&#x5EA6;&#x548C;&#x52A0;&#x901F;&#x5EA6;&#xFF0C;&#x548C;IMU&#x89C2;&#x6D4B;&#x5EFA;&#x7ACB;&#x6B8B;&#x5DEE;&#x9879;</p>
-<p>2.Unified Temporal and Spatial Calibration for Multi-Sensor Systems &#xFF08;IROS 2013&#xFF09;<br>&#x5728;1&#x7684;&#x57FA;&#x7840;&#x4E0A;&#x52A0;&#x5165;&#x65F6;&#x95F4;&#x5EF6;&#x8FDF;&#x7684;&#x4F30;&#x8BA1;</p>
-<p>3.Extending kalibr:Calibrating the Extrinsics of Multiple IMUs and of Individual Axes<br>&#x5728;2&#x7684;&#x57FA;&#x7840;&#x4E0A;&#xFF0C;&#x5BF9;IMU&#x8FDB;&#x884C;&#x4E86;&#x66F4;&#x7CBE;&#x7EC6;&#x7684;&#x5EFA;&#x6A21;&#x3002;&#x5EFA;&#x7ACB; input reference axes&#xFF08;IRA&#xFF09;&#xFF0C;&#x4F30;&#x8BA1;&#x52A0;&#x901F;&#x5EA6;&#x8BA1;&#x4E0E;IRA&#x7684;&#x65CB;&#x8F6C;&#xFF0C;&#x9640;&#x87BA;&#x4EEA;&#x4E0E;IRA&#x7684;&#x65CB;&#x8F6C;&#xFF0C;IMU&#x4E0E;IRA&#x4E4B;&#x95F4;&#x7684;&#x5E73;&#x79FB;&#xFF0C;&#x52A0;&#x8BA1;&#x5C3A;&#x5EA6;&#x56E0;&#x5B50;&#xFF0C;&#x52A0;&#x8BA1;&#x65CB;&#x8F6C;&#x4FEE;&#x6B63;&#xFF0C;&#x9640;&#x87BA;&#x4EEA;&#x5C3A;&#x5EA6;&#x56E0;&#x5B50;&#xFF0C;&#x9640;&#x87BA;&#x4EEA;&#x65CB;&#x8F6C;&#x4FEE;&#x6B63;&#xFF0C;&#x4EE5;&#x53CA;&#x52A0;&#x8BA1;&#x5BF9;&#x9640;&#x87BA;&#x4EEA;&#x7684;&#x5F71;&#x54CD;&#x56E0;&#x5B50; &#xFF08;ICRA 2016&#xFF09;</p>
-]]></content>
-      
-        <categories>
-            
-            <category> 机器人事业 </category>
-            
-            <category> SLAM </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> SLAM基础 </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
       <title><![CDATA[VIO初始化相关Paper简单梳理]]></title>
       <url>https://zhehangt.github.io/2019/03/23/SLAM/Basic/VIOInit/</url>
       <content type="html"><![CDATA[<a id="more"></a>
