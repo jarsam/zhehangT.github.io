@@ -4,6 +4,7 @@ date: 2019-12-10 10:11:25
 tags: 
 - GPS 
 categories:
+- 机器人事业
 - SLAM
 description: 关于学习 Visual Odometry 中如何使用GPS的简单记录
 ---
